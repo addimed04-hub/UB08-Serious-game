@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sauvez le Quartier — Joueur</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAF7F0;--paper2:#F4EFE3;--paper3:#EBE3D0;--paper4:#DDD3BA;
+  --leaf:#2D5F3F;--leaf2:#4A8B5C;--leaf3:#7AB088;--leaf4:#C8DEC9;--leaf5:#E8F2E5;
+  --amber:#B7770D;--a2:#E67E22;--a3:#FEF3E2;
+  --red:#C0392B;--r2:#E74C3C;--r3:#FDECEA;
+  --blue:#1A3A5C;--b3c:#EAF2FB;
+  --water:#3E7B92;--water2:#6BA3B8;--water3:#B8D4DC;
+  --earth:#A57F4F;--earth2:#C9A570;
+  --ink:#2A2620;--ink2:#4F4538;--ink3:#6B6760;--ink4:#9A9690;
+  --sun:#E8B547;
+  --display:'Fraunces',serif;--ui:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r4:8px;--r8:12px;--r12:16px;--r16:20px;
+  --shadow:0 2px 8px rgba(42,38,32,.1);--shadow-md:0 4px 16px rgba(42,38,32,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--ui);overflow-x:hidden}
+
+/* ── SCREENS ── */
+.scr{display:none;min-height:100vh;flex-direction:column}
+.scr.active{display:flex}
+
+/* ── JOIN ── */
+#s-join{align-items:center;justify-content:center;padding:32px 24px;
+  background:var(--paper);text-align:center;
+  background-image:linear-gradient(var(--paper3) 1px,transparent 1px),linear-gradient(90deg,var(--paper3) 1px,transparent 1px);
+  background-size:32px 32px;opacity:1}
+.join-logo{display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  color:var(--leaf);text-transform:uppercase;margin-bottom:24px;
+  padding:6px 16px;background:var(--leaf5);border:1px solid var(--leaf3);border-radius:30px}
+.join-title{font-family:var(--display);font-size:42px;font-weight:900;
+  line-height:.92;letter-spacing:-.02em;color:var(--ink);margin-bottom:8px}
+.join-title em{font-style:italic;color:var(--leaf)}
+.join-sub{font-size:14px;color:var(--ink3);margin-bottom:36px;line-height:1.5;
+  font-family:var(--display);font-style:italic}
+.join-box{background:var(--paper);border:1.5px solid var(--paper4);
+  border-radius:var(--r12);padding:24px;width:100%;max-width:340px;
+  box-shadow:var(--shadow-md);margin-bottom:20px}
+.join-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:12px;display:block}
+.join-input{width:100%;background:var(--paper2);border:2px solid var(--paper4);
+  border-radius:var(--r8);padding:16px;font-family:var(--mono);font-size:28px;
+  font-weight:700;color:var(--ink);text-align:center;letter-spacing:.2em;
+  outline:none;transition:border-color .2s}
+.join-input:focus{border-color:var(--leaf)}
+.join-input::placeholder{color:var(--ink4);font-size:20px;letter-spacing:.1em}
+.join-name-input{width:100%;background:var(--paper2);border:2px solid var(--paper4);
+  border-radius:var(--r8);padding:14px;font-family:var(--ui);font-size:18px;
+  color:var(--ink);text-align:center;outline:none;transition:border-color .2s;margin-top:12px}
+.join-name-input:focus{border-color:var(--leaf)}
+.btn-join{width:100%;max-width:340px;background:var(--leaf);color:var(--paper);
+  font-family:var(--display);font-size:20px;font-weight:700;
+  padding:18px;border:none;border-radius:50px;cursor:pointer;
+  box-shadow:0 4px 16px rgba(45,95,63,.25);transition:all .2s}
+.btn-join:active{transform:scale(.97)}
+.btn-join:disabled{opacity:.4;cursor:not-allowed}
+.join-status{font-family:var(--mono);font-size:11px;color:var(--ink3);
+  margin-top:14px;letter-spacing:.08em;min-height:20px}
+.join-status.error{color:var(--red)}
+.join-status.ok{color:var(--leaf)}
+
+/* ── ROLE PICK ── */
+#s-role{padding:20px 16px;align-items:center;background:var(--paper2)}
+.role-header{text-align:center;margin-bottom:20px;width:100%}
+.role-h-title{font-family:var(--display);font-size:28px;font-weight:700;margin-bottom:4px}
+.role-h-sub{font-size:13px;color:var(--ink3);font-family:var(--display);font-style:italic}
+.role-progress-p{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  width:100%;margin-bottom:20px}
+.rp-chip{font-family:var(--mono);font-size:10px;padding:5px 10px;
+  border-radius:20px;border:1px solid var(--paper4);background:var(--paper);
+  color:var(--ink3);transition:all .2s}
+.rp-chip.filled{background:var(--leaf5);border-color:var(--leaf);color:var(--leaf);font-weight:600}
+.rp-chip.mine{background:var(--leaf);color:var(--paper);border-color:var(--leaf)}
+.rp-chip.active{background:var(--sun);color:var(--ink);border-color:var(--amber);
+  animation:chipPulse 1.5s infinite}
+@keyframes chipPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,181,71,.4)}50%{box-shadow:0 0 0 6px rgba(232,181,71,0)}}
+.roles-list{display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px}
+.role-pick-card{background:var(--paper);border:1.5px solid var(--paper4);
+  border-radius:var(--r12);padding:14px 16px;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:12px;
+  box-shadow:var(--shadow)}
+.role-pick-card:active:not(.taken){transform:scale(.98)}
+.role-pick-card.taken{opacity:.4;pointer-events:none;filter:grayscale(.6)}
+.role-pick-card.mine{border-color:var(--leaf);background:var(--leaf5)}
+.rpc-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:24px;flex-shrink:0}
+.rpc-info{flex:1;min-width:0}
+.rpc-name{font-family:var(--display);font-size:16px;font-weight:700;color:var(--ink)}
+.rpc-tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink3)}
+.rpc-taken{font-family:var(--mono);font-size:9px;color:var(--ink4)}
+.btn-random{width:100%;max-width:400px;background:var(--paper);
+  border:1.5px solid var(--leaf);color:var(--leaf);
+  font-family:var(--display);font-size:16px;font-weight:700;
+  padding:14px;border-radius:50px;cursor:pointer;margin-top:12px;transition:all .2s}
+.btn-random:active{background:var(--leaf5)}
+
+/* ── WAITING ── */
+#s-wait{align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:var(--paper)}
+.wait-icon{font-size:64px;margin-bottom:20px;animation:waitPulse 2s infinite}
+@keyframes waitPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.wait-title{font-family:var(--display);font-size:28px;font-weight:700;margin-bottom:8px}
+.wait-sub{font-size:14px;color:var(--ink3);line-height:1.6;font-family:var(--display);font-style:italic;margin-bottom:32px}
+.wait-role-card{background:var(--paper);border:2px solid var(--leaf);
+  border-radius:var(--r12);padding:20px;max-width:320px;width:100%;
+  box-shadow:var(--shadow-md);text-align:center;margin-bottom:24px}
+.wrc-icon{font-size:40px;margin-bottom:8px}
+.wrc-name{font-family:var(--display);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.wrc-obj-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.wrc-obj{font-size:13px;color:var(--ink2);background:var(--leaf5);
+  border-radius:var(--r4);padding:10px 12px;line-height:1.5;
+  border-left:3px solid var(--leaf)}
+.wrc-pow{background:var(--paper2);border:1px solid var(--paper4);border-radius:var(--r4);
+  padding:10px 12px;margin-top:10px}
+.wrc-pow-name{font-family:var(--mono);font-size:9px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.wrc-pow-desc{font-size:12px;color:var(--ink3);line-height:1.5}
+.wait-players{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:320px}
+.wp-chip{font-size:12px;padding:6px 12px;border-radius:20px;
+  background:var(--paper2);border:1px solid var(--paper4);color:var(--ink2)}
+.wp-chip.ready{background:var(--leaf5);border-color:var(--leaf);color:var(--leaf)}
+
+/* ── TOUR ── */
+#s-tour{align-items:center;padding:20px 16px;background:var(--paper);min-height:100vh}
+
+/* Mini KPIs en haut */
+.mini-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;
+  width:100%;max-width:400px;margin-bottom:16px}
+.mk{background:var(--paper2);border:1px solid var(--paper4);border-radius:var(--r4);
+  padding:6px 4px;text-align:center}
+.mk-val{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink)}
+.mk-lbl{font-size:9px;color:var(--ink3);margin-top:1px}
+.mk.warn .mk-val{color:var(--red);animation:kw 1s infinite}
+@keyframes kw{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Tour info */
+.tour-info{background:var(--leaf);border-radius:var(--r8);padding:10px 16px;
+  width:100%;max-width:400px;margin-bottom:16px;
+  display:flex;justify-content:space-between;align-items:center}
+.ti-label{font-family:var(--mono);font-size:10px;color:rgba(250,247,240,.7);letter-spacing:.1em}
+.ti-val{font-family:var(--display);font-size:16px;font-weight:700;color:var(--paper)}
+
+/* État courant */
+.current-state{width:100%;max-width:400px;margin-bottom:16px;
+  background:var(--paper2);border:1px solid var(--paper4);border-radius:var(--r8);
+  padding:14px;text-align:center}
+.cs-label{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.cs-player{font-family:var(--display);font-size:20px;font-weight:700;color:var(--ink)}
+.cs-action{font-size:13px;color:var(--ink2);margin-top:4px;font-style:italic;font-family:var(--display)}
+
+/* Zone active */
+.active-zone{width:100%;max-width:400px;margin-bottom:16px}
+.az-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.az-cell{background:var(--paper2);border:1.5px solid var(--paper4);
+  border-radius:var(--r8);padding:12px;display:flex;align-items:center;gap:10px}
+.az-cell.transformed{background:var(--leaf5);border-color:var(--leaf)}
+.az-icon{font-size:28px}
+.az-name{font-family:var(--display);font-size:15px;font-weight:700}
+.az-state{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:2px}
+
+/* Bouton dé */
+.dice-area{width:100%;max-width:400px;margin-bottom:16px;text-align:center}
+.dice-big{width:90px;height:90px;background:var(--paper);border:3px solid var(--ink);
+  border-radius:var(--r12);display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;font-family:var(--mono);font-size:40px;font-weight:700;
+  box-shadow:var(--shadow-md);transition:all .2s}
+.dice-big.rolling{animation:dR .5s linear}
+@keyframes dR{0%,100%{transform:rotate(0)}25%{transform:rotate(-15deg) scale(1.1)}50%{transform:rotate(10deg)}75%{transform:rotate(-5deg)}}
+.btn-dice{width:100%;background:var(--leaf);color:var(--paper);
+  font-family:var(--display);font-size:20px;font-weight:700;
+  padding:18px;border:none;border-radius:50px;cursor:pointer;
+  box-shadow:0 4px 16px rgba(45,95,63,.25);transition:all .2s}
+.btn-dice:active:not(:disabled){transform:scale(.97)}
+.btn-dice:disabled{opacity:.3;cursor:not-allowed;background:var(--paper3);color:var(--ink3);box-shadow:none}
+
+/* Actions */
+.actions-area{width:100%;max-width:400px;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.act-btn{background:var(--paper);border:1.5px solid var(--paper4);
+  border-radius:var(--r8);padding:14px 16px;cursor:pointer;text-align:left;
+  box-shadow:var(--shadow);transition:all .15s;width:100%}
+.act-btn:active:not(:disabled){transform:scale(.98)}
+.act-btn:disabled{opacity:.4;cursor:not-allowed}
+.act-btn.primary{border-color:var(--leaf);background:var(--leaf5)}
+.ab-name{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.ab-desc{font-size:12px;color:var(--ink3);line-height:1.4}
+.ab-cost{font-family:var(--mono);font-size:11px;color:var(--amber);margin-top:6px;
+  padding-top:6px;border-top:1px dashed var(--paper4)}
+
+/* Chrono */
+.chrono{width:100%;max-width:400px;background:var(--r3);border:2px solid var(--red);
+  border-radius:var(--r8);padding:12px;text-align:center;margin-bottom:16px;
+  animation:chronoIn .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes chronoIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.chrono-label{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--red);margin-bottom:4px}
+.chrono-time{font-family:var(--mono);font-size:44px;font-weight:700;color:var(--red);line-height:1}
+.chrono-time.urgent{animation:uPulse .5s infinite}
+@keyframes uPulse{0%,100%{color:var(--red)}50%{color:#8B0000}}
+.chrono-bar{height:5px;background:rgba(192,57,43,.2);border-radius:3px;margin-top:8px;overflow:hidden}
+.chrono-fill{height:100%;background:var(--red);border-radius:3px;transition:width 1s linear}
+.chrono-hint{font-size:11px;color:var(--red);margin-top:6px;font-style:italic;font-family:var(--display)}
+
+/* Pouvoir */
+.pow-area{width:100%;max-width:400px;margin-bottom:16px}
+.pow-card{background:var(--a3);border:1.5px solid var(--amber);
+  border-radius:var(--r8);padding:12px 14px;cursor:pointer;
+  box-shadow:var(--shadow);transition:all .15s}
+.pow-card:active:not(.used){transform:scale(.98)}
+.pow-card.used{opacity:.3;cursor:not-allowed;filter:grayscale(.7)}
+.pc-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--amber);margin-bottom:4px;font-weight:600}
+.pc-name{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.pc-desc{font-size:11px;color:var(--ink3);line-height:1.4}
+
+/* Carte pioche */
+#s-card{align-items:center;justify-content:center;padding:24px 16px;
+  background:rgba(250,247,240,.97);min-height:100vh}
+.card-wrap{background:var(--paper);border:1.5px solid var(--paper4);
+  border-radius:var(--r16);padding:28px 24px;max-width:380px;width:100%;
+  text-align:center;box-shadow:var(--shadow-md);position:relative;overflow:hidden;
+  animation:cardIn .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:none}}
+.card-stripe{position:absolute;top:0;left:0;right:0;height:4px}
+.card-wrap.chance .card-stripe{background:linear-gradient(90deg,var(--leaf2),var(--leaf3))}
+.card-wrap.malchance .card-stripe{background:linear-gradient(90deg,var(--red),var(--r2))}
+.card-wrap.info .card-stripe{background:linear-gradient(90deg,var(--water),var(--water2))}
+.card-wrap.citoyens .card-stripe{background:linear-gradient(90deg,var(--earth),var(--earth2))}
+.card-icon-box{width:70px;height:70px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;margin:0 auto 14px;font-size:36px;
+  animation:iconPop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes iconPop{from{transform:scale(0)}to{transform:scale(1)}}
+.card-wrap.chance .card-icon-box{background:var(--leaf5);border:2px solid var(--leaf3)}
+.card-wrap.malchance .card-icon-box{background:var(--r3);border:2px solid var(--r2)}
+.card-wrap.info .card-icon-box{background:var(--water3);border:2px solid var(--water2)}
+.card-wrap.citoyens .card-icon-box{background:var(--a3);border:2px solid var(--amber)}
+.card-badge{font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;padding:4px 12px;border-radius:20px;
+  display:inline-block;margin-bottom:12px;font-weight:600}
+.card-wrap.chance .card-badge{background:var(--leaf5);color:var(--leaf)}
+.card-wrap.malchance .card-badge{background:var(--r3);color:var(--red)}
+.card-wrap.info .card-badge{background:var(--water3);color:var(--water)}
+.card-wrap.citoyens .card-badge{background:var(--a3);color:var(--amber)}
+.card-title{font-family:var(--display);font-size:24px;font-weight:900;
+  color:var(--ink);margin-bottom:10px;letter-spacing:-.01em;line-height:1.1}
+.card-desc{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:14px;
+  font-family:var(--display);font-style:italic}
+.card-stat{background:var(--paper2);border-left:3px solid var(--water);
+  padding:10px 12px;font-size:12px;color:var(--ink2);text-align:left;
+  border-radius:0 var(--r4) var(--r4) 0;margin-bottom:16px;line-height:1.6}
+.card-stat strong{color:var(--water);font-family:var(--mono);font-weight:700}
+.card-pills{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.cp{font-family:var(--mono);font-size:10px;font-weight:600;
+  padding:6px 12px;border-radius:20px}
+.cp.pos{background:var(--leaf5);color:var(--leaf)}
+.cp.neg{background:var(--r3);color:var(--red)}
+.card-choices{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.cc-btn{background:var(--paper);border:1.5px solid var(--paper4);
+  border-radius:var(--r8);padding:12px 14px;cursor:pointer;text-align:left;
+  transition:all .15s}
+.cc-btn:active{background:var(--leaf5);border-color:var(--leaf)}
+.cc-btn strong{font-family:var(--display);display:block;margin-bottom:3px;font-size:14px}
+.cc-btn span{font-size:12px;color:var(--ink3)}
+.btn-card-ok{width:100%;background:var(--leaf);color:var(--paper);
+  font-family:var(--display);font-size:17px;font-weight:700;
+  padding:14px;border:none;border-radius:50px;cursor:pointer;
+  box-shadow:0 4px 14px rgba(45,95,63,.25);transition:all .2s}
+.btn-card-ok:active{transform:scale(.98)}
+
+/* Pas mon tour */
+#s-attente{align-items:center;justify-content:center;padding:40px 24px;
+  text-align:center;background:var(--paper);min-height:100vh}
+.att-icon{font-size:56px;margin-bottom:20px;animation:attPulse 2s infinite}
+@keyframes attPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.att-title{font-family:var(--display);font-size:26px;font-weight:700;margin-bottom:8px}
+.att-sub{font-size:14px;color:var(--ink3);line-height:1.6;font-family:var(--display);font-style:italic;margin-bottom:24px}
+.att-current{background:var(--paper2);border:1.5px solid var(--paper4);
+  border-radius:var(--r12);padding:16px;max-width:300px;width:100%;margin-bottom:20px}
+.att-c-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.att-c-player{font-family:var(--display);font-size:20px;font-weight:700}
+.att-log{width:100%;max-width:320px;text-align:left}
+.al-title{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.al-entry{font-family:var(--mono);font-size:10px;color:var(--ink3);
+  padding:5px 8px;border-left:2px solid var(--paper4);margin-bottom:4px;
+  background:var(--paper2);border-radius:0 var(--r4) var(--r4) 0}
+.al-entry.good{border-color:var(--leaf2);background:var(--leaf5);color:var(--leaf)}
+.al-entry.bad{border-color:var(--red);background:var(--r3);color:var(--red)}
+
+/* Bilan */
+#s-bilan{align-items:center;padding:32px 24px;text-align:center;
+  background:var(--paper);min-height:100vh}
+.bilan-title{font-family:var(--display);font-size:36px;font-weight:900;
+  margin-bottom:6px;letter-spacing:-.01em}
+.bilan-title em{font-style:italic;color:var(--leaf)}
+.score-wrap{position:relative;width:150px;height:150px;margin:16px auto}
+.ssvg{width:150px;height:150px;transform:rotate(-90deg)}
+.s-track{fill:none;stroke:var(--paper3);stroke-width:5}
+.s-fill{fill:none;stroke:var(--leaf);stroke-width:5;stroke-linecap:round;
+  transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1)}
+.score-center{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center}
+.snum{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--leaf);line-height:1}
+.sden{font-family:var(--mono);font-size:13px;color:var(--ink3)}
+.bilan-lv{font-family:var(--display);font-size:24px;font-weight:700;margin-bottom:6px}
+.bilan-msg{font-size:13px;color:var(--ink3);max-width:320px;line-height:1.6;
+  margin:0 auto 20px;font-family:var(--display);font-style:italic}
+.bilan-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  width:100%;max-width:340px;margin-bottom:20px}
+.bk{background:var(--paper2);border:1px solid var(--paper4);
+  border-radius:var(--r8);padding:12px;text-align:center}
+.bk-val{font-family:var(--mono);font-size:20px;font-weight:700;margin-bottom:2px}
+.bk-lbl{font-size:10px;color:var(--ink3)}
+.debrief{background:var(--paper2);border:1.5px solid var(--paper4);
+  border-radius:var(--r12);padding:16px;max-width:340px;width:100%;
+  text-align:left;margin-bottom:20px}
+.deb-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--leaf);margin-bottom:10px}
+.deb-q{font-family:var(--display);font-style:italic;font-size:13px;
+  color:var(--ink2);line-height:1.6;padding:6px 0 6px 12px;
+  border-left:2px solid var(--leaf2);margin-bottom:6px}
+.btn-replay{background:var(--paper);border:2px solid var(--leaf);color:var(--leaf);
+  font-family:var(--display);font-size:17px;font-weight:700;
+  padding:14px 36px;border-radius:50px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;transition:all .2s}
+.btn-replay:active{background:var(--leaf);color:var(--paper)}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:var(--paper);border-radius:30px;
+  padding:10px 20px;font-size:12px;z-index:9000;
+  transition:transform .3s;max-width:90vw;text-align:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.g{background:var(--leaf)}
+.toast.r{background:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- JOIN -->
+<div id="s-join" class="scr active">
+  <div class="join-logo">🌿 Sauvez le Quartier · UR05</div>
+  <h1 class="join-title">Rejoindre<br><em>la cellule</em></h1>
+  <p class="join-sub">Entrez le code affiché sur l'écran principal</p>
+  <div class="join-box">
+    <label class="join-label">Code de la salle</label>
+    <input class="join-input" id="room-code" type="text" maxlength="4"
+      placeholder="XXXX" autocomplete="off" autocapitalize="characters"
+      oninput="this.value=this.value.toUpperCase()">
+    <input class="join-name-input" id="player-name" type="text"
+      placeholder="Votre prénom" maxlength="20">
+  </div>
+  <button class="btn-join" id="btn-join" onclick="joinRoom()">Rejoindre →</button>
+  <div class="join-status" id="join-status"></div>
+</div>
+
+<!-- ROLE PICK -->
+<div id="s-role" class="scr">
+  <div class="role-header">
+    <div class="role-h-title">Choisissez votre rôle</div>
+    <div class="role-h-sub" id="role-sub">À vous de choisir...</div>
+  </div>
+  <div class="role-progress-p" id="role-progress"></div>
+  <div class="roles-list" id="roles-list"></div>
+  <button class="btn-random" id="btn-random" onclick="randomRole()">🎲 Rôle aléatoire</button>
+</div>
+
+<!-- WAITING -->
+<div id="s-wait" class="scr">
+  <div class="wait-icon" id="wait-icon">⏳</div>
+  <h2 class="wait-title" id="wait-title">En attente...</h2>
+  <p class="wait-sub" id="wait-sub">D'autres joueurs n'ont pas encore choisi leur rôle.</p>
+  <div class="wait-role-card" id="wait-role-card" style="display:none">
+    <div class="wrc-icon" id="wrc-icon"></div>
+    <div class="wrc-name" id="wrc-name"></div>
+    <div class="wrc-obj-label">Votre objectif secret</div>
+    <div class="wrc-obj" id="wrc-obj"></div>
+    <div class="wrc-pow" id="wrc-pow">
+      <div class="wrc-pow-name" id="wrc-pow-name"></div>
+      <div class="wrc-pow-desc" id="wrc-pow-desc"></div>
+    </div>
+  </div>
+  <div class="wait-players" id="wait-players"></div>
+</div>
+
+<!-- MON TOUR -->
+<div id="s-tour" class="scr">
+  <div class="mini-kpis" id="mini-kpis"></div>
+  <div class="tour-info">
+    <div><div class="ti-label">TOUR</div><div class="ti-val" id="t-tour">1 / 6</div></div>
+    <div style="text-align:right"><div class="ti-label">ZONES</div><div class="ti-val" id="t-zones">0/12</div></div>
+  </div>
+  <div class="current-state">
+    <div class="cs-label">C'est votre tour !</div>
+    <div class="cs-player" id="cs-player"></div>
+    <div class="cs-action" id="cs-action">Lancez le dé pour avancer sur le circuit</div>
+  </div>
+  <div class="active-zone" id="active-zone" style="display:none">
+    <div class="az-label">Case actuelle</div>
+    <div class="az-cell" id="az-cell">
+      <span class="az-icon" id="az-icon">🏛️</span>
+      <div><div class="az-name" id="az-name">Mairie</div><div class="az-state" id="az-state">Départ</div></div>
+    </div>
+  </div>
+  <div id="chrono-area"></div>
+  <div class="dice-area" id="dice-area">
+    <div class="dice-big" id="dice-big">?</div>
+    <button class="btn-dice" id="btn-dice" onclick="rollDice()">🎲 Lancer le dé</button>
+  </div>
+  <div class="actions-area" id="actions-area" style="display:none"></div>
+  <div class="pow-area" id="pow-area"></div>
+</div>
+
+<!-- CARD -->
+<div id="s-card" class="scr">
+  <div class="card-wrap" id="card-wrap">
+    <div class="card-stripe"></div>
+    <div class="card-icon-box" id="c-icon">🎴</div>
+    <div class="card-badge" id="c-badge">CARTE</div>
+    <div class="card-title" id="c-title">Titre</div>
+    <div class="card-desc" id="c-desc">Desc</div>
+    <div class="card-stat" id="c-stat" style="display:none"></div>
+    <div class="card-pills" id="c-pills"></div>
+    <div class="card-choices" id="c-choices" style="display:none"></div>
+    <button class="btn-card-ok" id="c-ok" onclick="closeCard()">Continuer →</button>
+  </div>
+</div>
+
+<!-- ATTENTE TOUR AUTRES -->
+<div id="s-attente" class="scr">
+  <div class="att-icon">👀</div>
+  <h2 class="att-title">C'est leur tour</h2>
+  <p class="att-sub" id="att-sub">Regardez le plateau et discutez !</p>
+  <div class="att-current">
+    <div class="att-c-label">Joueur actif</div>
+    <div class="att-c-player" id="att-player">—</div>
+  </div>
+  <div class="att-log">
+    <div class="al-title">Dernières actions</div>
+    <div id="att-log-list"></div>
+  </div>
+</div>
+
+<!-- BILAN -->
+<div id="s-bilan" class="scr">
+  <div class="bilan-title">Saint-Jean<br><em>après 6 tours</em></div>
+  <div class="score-wrap">
+    <svg class="ssvg" viewBox="0 0 150 150">
+      <circle class="s-track" cx="75" cy="75" r="63"/>
+      <circle class="s-fill" id="s-fill-ring" cx="75" cy="75" r="63" stroke-dasharray="396" stroke-dashoffset="396"/>
+    </svg>
+    <div class="score-center"><div class="snum" id="b-score">0</div><div class="sden">/100</div></div>
+  </div>
+  <div class="bilan-lv" id="b-lv">—</div>
+  <div class="bilan-msg" id="b-msg"></div>
+  <div class="bilan-kpis" id="b-kpis"></div>
+  <div class="debrief">
+    <div class="deb-title">◆ Débriefing</div>
+    <div class="deb-q">Quel indicateur était le plus difficile ?</div>
+    <div class="deb-q">Quel rôle a eu le plus d'influence ?</div>
+    <div class="deb-q">Et chez vous, quelle zone en premier ?</div>
+  </div>
+  <button class="btn-replay" onclick="location.reload()">↺ Nouvelle partie</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script>
+// ══════════════════════════════════════════════
+// DONNÉES (identiques à index.html)
+// ══════════════════════════════════════════════
+const ROLES=[
+  {id:'maire',icon:'🏛️',color:'#2A2620',iconBg:'#F4EFE3',name:'Le Maire',tag:'Décideur politique',
+   obj:'Maintenir satisfaction > 40 ET zones transformées ≥ 10.',
+   pow:'DÉCRET D\'URGENCE',powDesc:'Relancer le dé une fois par partie.'},
+  {id:'financier',icon:'💰',color:'#A57F4F',iconBg:'#F5EBD8',name:'Dir. Financier',tag:'Gestion budgétaire',
+   obj:'Terminer avec > 50k€ de réserve.',
+   pow:'SUBVENTION EXPRESS',powDesc:'+80k€ une fois par partie.'},
+  {id:'technique',icon:'🔧',color:'#3E7B92',iconBg:'#B8D4DC',name:'Dir. Technique',tag:'Expert terrain',
+   obj:'Étudier au moins 2 cases avant d\'investir.',
+   pow:'EXPERTISE TECHNIQUE',powDesc:'Révèle la prochaine carte tirée.'},
+  {id:'habitant',icon:'🏘️',color:'#C0594A',iconBg:'#F4D8D1',name:'Repr. Habitants',tag:'Voix citoyenne',
+   obj:'Obtenir +20 pts de satisfaction.',
+   pow:'MOBILISATION',powDesc:'+15 pts satisfaction.'},
+  {id:'espaces_verts',icon:'🌳',color:'#2D5F3F',iconBg:'#C8DEC9',name:'Dir. Espaces Verts',tag:'Expert nature',
+   obj:'Atteindre > 55 pts de biodiversité.',
+   pow:'EXPERTISE VÉGÉTALE',powDesc:'+10 pts biodiversité.'},
+  {id:'opposition',icon:'⚖️',color:'#5C4530',iconBg:'#E8DCC2',name:'Élu Opposition',tag:'Contre-pouvoir',
+   obj:'Utiliser son veto au moins une fois.',
+   pow:'VETO POLITIQUE',powDesc:'Bloque une action. -20k€.'}
+];
+
+const CELL_TYPES={
+  P:{type:'imp',sub:'parking',icon:'🅿️',label:'Parking',cost:68000},
+  C:{type:'imp',sub:'cour',icon:'🏫',label:'Cour école',cost:140000},
+  R:{type:'imp',sub:'rue',icon:'🛣️',label:'Rue',cost:85000},
+  F:{type:'imp',sub:'friche',icon:'🏚️',label:'Friche',cost:55000},
+  I:{type:'info',icon:'💡',label:'Info'},
+  H:{type:'chance',icon:'🍀',label:'Chance'},
+  M:{type:'malchance',icon:'⚠️',label:'Malchance'},
+  Z:{type:'citoyens',icon:'👥',label:'Citoyens'},
+  X:{type:'mairie',icon:'🏛️',label:'Mairie'},
+  Y:{type:'mairie-sec',icon:'🏢',label:'Annexe'}
+};
+
+const CIRCUIT_TYPES=['X','P','I','H','R','C','M','P','I','F','Y','R','H','C','P','Z','F','M','R','I','P','H','C','M'];
+
+// ══════════════════════════════════════════════
+// STATE JOUEUR
+// ══════════════════════════════════════════════
+let peer=null,conn=null;
+let myName='',myRoleIdx=null,myPlayerIdx=null;
+let G=null,gameState=null;
+let decisionTimer=null;
+
+// ══════════════════════════════════════════════
+// SCREENS
+// ══════════════════════════════════════════════
+function show(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════════
+// JOIN
+// ══════════════════════════════════════════════
+function joinRoom(){
+  const code=document.getElementById('room-code').value.trim().toUpperCase();
+  const name=document.getElementById('player-name').value.trim();
+  if(code.length!==4){setStatus('Code invalide — 4 lettres/chiffres','error');return;}
+  if(!name){setStatus('Entrez votre prénom','error');return;}
+  myName=name;
+  setStatus('Connexion en cours...','');
+  document.getElementById('btn-join').disabled=true;
+
+  peer=new Peer(undefined,{debug:0});
+  peer.on('open',()=>{
+    // Se connecter à l'hôte via le code de salle
+    conn=peer.connect('sqhost-'+code,{reliable:true});
+    conn.on('open',()=>{
+      setStatus('Connecté ! En attente...','ok');
+      send({type:'join',name:myName});
+    });
+    conn.on('data',onData);
+    conn.on('error',()=>setStatus('Erreur de connexion','error'));
+    conn.on('close',()=>setStatus('Connexion perdue — rechargez','error'));
+  });
+  peer.on('error',(e)=>{
+    setStatus('Connexion impossible. Vérifiez le code.','error');
+    document.getElementById('btn-join').disabled=false;
+  });
+}
+
+function setStatus(msg,cls){
+  const el=document.getElementById('join-status');
+  el.textContent=msg;el.className='join-status '+(cls||'');
+}
+
+function send(msg){if(conn&&conn.open)conn.send(msg);}
+
+// ══════════════════════════════════════════════
+// RÉCEPTION MESSAGES DE L'HÔTE
+// ══════════════════════════════════════════════
+function onData(msg){
+  switch(msg.type){
+    case'welcome': myPlayerIdx=msg.playerIdx; show('s-role'); break;
+    case'role_update': updateRoleScreen(msg); break;
+    case'game_start': G=msg.G; gameState=msg.gameState; onGameStart(); break;
+    case'your_turn': G=msg.G; gameState=msg.gameState; onMyTurn(msg); break;
+    case'wait': G=msg.G; gameState=msg.gameState; onWait(msg); break;
+    case'show_card': showCard(msg.card,msg.kind); break;
+    case'game_over': G=msg.G; showBilan(msg.defeat); break;
+    case'state_update': G=msg.G; gameState=msg.gameState; updateMiniKPIs(); updateTourInfo(); break;
+  }
+}
+
+// ══════════════════════════════════════════════
+// ÉCRAN RÔLES
+// ══════════════════════════════════════════════
+function updateRoleScreen(msg){
+  const taken=msg.taken||{};
+  const mySlot=msg.mySlot;
+  const nbPlayers=msg.nbPlayers||4;
+
+  // Progress chips
+  const prog=document.getElementById('role-progress');
+  prog.innerHTML='';
+  for(let i=0;i<nbPlayers;i++){
+    const chip=document.createElement('div');
+    const takenRole=Object.entries(taken).find(([idx,slot])=>slot===i);
+    chip.className='rp-chip'+(takenRole?' filled':'');
+    if(i===myPlayerIdx)chip.className+=' mine';
+    chip.textContent=takenRole?ROLES[parseInt(takenRole[0])].icon:`J${i+1}`;
+    prog.appendChild(chip);
+  }
+
+  // Sous-titre
+  const sub=document.getElementById('role-sub');
+  if(myRoleIdx!==null){
+    sub.textContent='Vous avez choisi '+ROLES[myRoleIdx].name+' — attendez les autres.';
+  } else if(mySlot===myPlayerIdx){
+    sub.textContent='À vous de choisir !';
+  } else {
+    sub.textContent='En attente de votre tour de sélection...';
+  }
+
+  // Liste des rôles
+  const list=document.getElementById('roles-list');
+  list.innerHTML='';
+  const canChoose=(mySlot===myPlayerIdx&&myRoleIdx===null);
+  ROLES.forEach((r,i)=>{
+    const isTaken=taken[i]!==undefined;
+    const isMine=myRoleIdx===i;
+    const card=document.createElement('div');
+    card.className='role-pick-card'+(isTaken?' taken':isMine?' mine':'');
+    card.innerHTML=`
+      <div class="rpc-icon" style="background:${r.iconBg}">${r.icon}</div>
+      <div class="rpc-info">
+        <div class="rpc-name" style="color:${r.color}">${r.name}</div>
+        <div class="rpc-tag">${r.tag}</div>
+        ${isTaken&&!isMine?`<div class="rpc-taken">Pris</div>`:''}
+        ${isMine?`<div class="rpc-taken" style="color:var(--leaf)">✓ Votre rôle</div>`:''}
+      </div>
+      ${isMine?'<span style="font-size:20px">✓</span>':''}`;
+    if(canChoose&&!isTaken){
+      card.onclick=()=>{myRoleIdx=i;send({type:'pick_role',roleIdx:i});};
+    }
+    list.appendChild(card);
+  });
+
+  const btnR=document.getElementById('btn-random');
+  btnR.style.display=canChoose?'block':'none';
+}
+
+function randomRole(){
+  // Demander à l'hôte de choisir un rôle aléatoire
+  send({type:'random_role'});
+}
+
+// ══════════════════════════════════════════════
+// GAME START
+// ══════════════════════════════════════════════
+function onGameStart(){
+  const myRole=ROLES[myRoleIdx]||ROLES[0];
+  // Afficher waiting avec mon rôle
+  document.getElementById('wait-icon').textContent=myRole.icon;
+  document.getElementById('wait-title').textContent='Prêt, '+myName+' !';
+  document.getElementById('wait-sub').textContent='La partie démarre. Votre rôle :';
+  const wrc=document.getElementById('wait-role-card');
+  wrc.style.display='block';
+  document.getElementById('wrc-icon').textContent=myRole.icon;
+  document.getElementById('wrc-name').textContent=myRole.name;
+  document.getElementById('wrc-obj').textContent=myRole.obj;
+  document.getElementById('wrc-pow-name').textContent='⚡ '+myRole.pow;
+  document.getElementById('wrc-pow-desc').textContent=myRole.powDesc;
+  show('s-wait');
+}
+
+// ══════════════════════════════════════════════
+// MON TOUR
+// ══════════════════════════════════════════════
+function onMyTurn(msg){
+  stopChrono();
+  updateMiniKPIs();updateTourInfo();
+  const myRole=ROLES[myRoleIdx]||{name:myName,icon:'👤'};
+  document.getElementById('cs-player').textContent=myRole.icon+' '+myRole.name;
+  document.getElementById('cs-action').textContent='Lancez le dé pour avancer !';
+
+  // Cacher zone active et actions au début
+  document.getElementById('active-zone').style.display='none';
+  document.getElementById('dice-area').style.display='block';
+  document.getElementById('actions-area').style.display='none';
+  document.getElementById('chrono-area').innerHTML='';
+
+  // Dé
+  const diceBox=document.getElementById('dice-big');
+  diceBox.textContent='?';
+  document.getElementById('btn-dice').disabled=false;
+
+  // Pouvoir
+  buildPowArea();
+  show('s-tour');
+}
+
+function rollDice(){
+  document.getElementById('btn-dice').disabled=true;
+  const diceBox=document.getElementById('dice-big');
+  diceBox.classList.add('rolling');
+  let rolls=0;
+  const iv=setInterval(()=>{
+    diceBox.textContent=Math.floor(Math.random()*6)+1;
+    rolls++;
+    if(rolls>10){
+      clearInterval(iv);
+      diceBox.classList.remove('rolling');
+      const val=Math.floor(Math.random()*6)+1;
+      diceBox.textContent=val;
+      send({type:'roll_dice',val});
+      document.getElementById('cs-action').textContent=`Dé : ${val} — déplacement en cours...`;
+    }
+  },50);
+}
+
+// Après déplacement, l'hôte envoie "show_action"
+function showActionOnCell(msg){
+  G=msg.G;gameState=msg.gameState;
+  updateMiniKPIs();updateTourInfo();
+  stopChrono();
+
+  const cellIdx=msg.cellIdx;
+  const cellType=CIRCUIT_TYPES[cellIdx];
+  const cellDef=CELL_TYPES[cellType];
+  const isTransformed=msg.transformed;
+
+  // Zone active
+  const azArea=document.getElementById('active-zone');
+  azArea.style.display='block';
+  const azCell=document.getElementById('az-cell');
+  azCell.className='az-cell'+(isTransformed?' transformed':'');
+  document.getElementById('az-icon').textContent=cellDef.icon;
+  document.getElementById('az-name').textContent=cellDef.label;
+  document.getElementById('az-state').textContent=isTransformed?'✓ Transformée':cellDef.type==='imp'?'Imperméable — à transformer':'';
+
+  // Cacher dé
+  document.getElementById('dice-area').style.display='none';
+  document.getElementById('cs-action').textContent=getPrompt(cellDef);
+
+  // Actions
+  buildActions(cellDef,isTransformed,msg.surcut,msg.discount,msg.pBlock);
+}
+
+function getPrompt(def){
+  if(def.type==='imp')return'Zone à transformer — vous avez 20 secondes pour décider !';
+  if(def.type==='chance')return'Tirez une carte Chance !';
+  if(def.type==='malchance')return'Tirez une carte Malchance...';
+  if(def.type==='info')return'Une info pédagogique vous attend.';
+  if(def.type==='citoyens')return'Une concertation citoyenne.';
+  if(def.type==='mairie'||def.type==='mairie-sec')return'+30k€ de subvention disponibles.';
+  return'Passez votre tour.';
+}
+
+function buildActions(cellDef,isTransformed,surcut,discount,pBlock){
+  const area=document.getElementById('actions-area');
+  area.style.display='flex';
+  area.innerHTML='';
+
+  if(cellDef.type==='imp'&&!isTransformed){
+    let cost=cellDef.cost;
+    if(discount)cost-=20000;
+    if(surcut&&cellDef.sub==='cour')cost+=50000;
+    const canAfford=G&&G.bud>=cost;
+
+    // Chrono
+    const ca=document.getElementById('chrono-area');
+    ca.innerHTML=`
+      <div class="chrono">
+        <div class="chrono-label">⏱ Délibérez maintenant !</div>
+        <div class="chrono-time" id="chrono-t">20</div>
+        <div class="chrono-bar"><div class="chrono-fill" id="chrono-f" style="width:100%"></div></div>
+        <div class="chrono-hint">Sans décision → la zone reste bétonnée</div>
+      </div>`;
+    startChrono();
+
+    [{id:'invest',label:'🌱 Désimperméabiliser',desc:'Transformer cette zone.',cost:`-${Math.round(cost/1000)}k€`,primary:canAfford,disabled:!canAfford},
+     {id:'study',label:'🔍 Étudier',desc:'Gratuit — révèle les contraintes.',cost:null,primary:false,disabled:false},
+     {id:'pass',label:'⏭️ Passer',desc:'Ne rien faire.',cost:null,primary:false,disabled:false}
+    ].forEach(a=>{
+      const btn=document.createElement('button');
+      btn.className='act-btn'+(a.primary?' primary':'');
+      btn.disabled=a.disabled;
+      btn.innerHTML=`<div class="ab-name">${a.label}</div><div class="ab-desc">${a.desc}</div>${a.cost?`<div class="ab-cost">${a.cost}</div>`:''}`;
+      btn.onclick=()=>{stopChrono();send({type:'action',action:a.id});};
+      area.appendChild(btn);
+    });
+  } else if(cellDef.type==='chance'||cellDef.type==='malchance'||cellDef.type==='info'||cellDef.type==='citoyens'){
+    const btn=document.createElement('button');
+    btn.className='act-btn primary';
+    btn.innerHTML=`<div class="ab-name">🎴 Tirer la carte</div><div class="ab-desc">Révéler et appliquer</div>`;
+    btn.onclick=()=>send({type:'action',action:'draw_card'});
+    area.appendChild(btn);
+  } else if(cellDef.type==='mairie'||cellDef.type==='mairie-sec'){
+    const btn=document.createElement('button');
+    btn.className='act-btn primary';
+    btn.innerHTML=`<div class="ab-name">💰 Récupérer +30k€</div><div class="ab-desc">Subvention municipale</div>`;
+    btn.onclick=()=>send({type:'action',action:'mairie'});
+    area.appendChild(btn);
+    const btn2=document.createElement('button');
+    btn2.className='act-btn';
+    btn2.innerHTML=`<div class="ab-name">⏭️ Passer</div>`;
+    btn2.onclick=()=>send({type:'action',action:'pass'});
+    area.appendChild(btn2);
+  } else {
+    const btn=document.createElement('button');
+    btn.className='act-btn';
+    btn.innerHTML=`<div class="ab-name">⏭️ Passer</div>`;
+    btn.onclick=()=>send({type:'action',action:'pass'});
+    area.appendChild(btn);
+  }
+}
+
+function buildPowArea(){
+  const area=document.getElementById('pow-area');
+  if(!G||myPlayerIdx===null){area.innerHTML='';return;}
+  const player=gameState&&gameState.players?gameState.players[myPlayerIdx]:null;
+  if(!player){area.innerHTML='';return;}
+  const role=ROLES[myRoleIdx]||ROLES[0];
+  const used=player.powerUsed;
+  area.innerHTML=`
+    <div class="pow-area">
+      <div class="pow-card${used?' used':''}" onclick="${used?'':'usePow()'}">
+        <div class="pc-label">⚡ Pouvoir spécial${used?' — Utilisé':''}</div>
+        <div class="pc-name">${role.pow}</div>
+        <div class="pc-desc">${role.powDesc}</div>
+      </div>
+    </div>`;
+}
+
+function usePow(){send({type:'use_power'});}
+
+// ══════════════════════════════════════════════
+// CHRONO
+// ══════════════════════════════════════════════
+function startChrono(){
+  stopChrono();
+  let t=20;
+  decisionTimer=setInterval(()=>{
+    t--;
+    const el=document.getElementById('chrono-t');
+    const bar=document.getElementById('chrono-f');
+    if(el)el.textContent=t;
+    if(bar)bar.style.width=(t/20*100)+'%';
+    if(el&&t<=5)el.classList.add('urgent');
+    if(t<=0){
+      stopChrono();
+      send({type:'action',action:'pass'});
+      showToast('⏱ Temps écoulé !','r');
+    }
+  },1000);
+}
+function stopChrono(){if(decisionTimer){clearInterval(decisionTimer);decisionTimer=null;}}
+
+// ══════════════════════════════════════════════
+// ATTENTE TOUR DES AUTRES
+// ══════════════════════════════════════════════
+function onWait(msg){
+  stopChrono();
+  updateMiniKPIs();updateTourInfo();
+  const curPlayer=gameState&&gameState.players?gameState.players[msg.currentPlayerIdx]:null;
+  const name=curPlayer?ROLES[curPlayer.roleIdx]?.name||'—':'—';
+  const icon=curPlayer?ROLES[curPlayer.roleIdx]?.icon||'👤':'👤';
+  document.getElementById('att-player').textContent=icon+' '+name;
+  document.getElementById('att-sub').textContent=msg.action||'Regardez le plateau !';
+  // Journal
+  const log=document.getElementById('att-log-list');
+  const entries=G&&G.journal?G.journal.slice(0,5):[];
+  log.innerHTML=entries.map(e=>`<div class="al-entry ${e.type||''}">${e.text}</div>`).join('');
+  show('s-attente');
+}
+
+// ══════════════════════════════════════════════
+// CARTE
+// ══════════════════════════════════════════════
+function showCard(card,kind){
+  const wrap=document.getElementById('card-wrap');
+  wrap.className='card-wrap '+kind;
+  document.getElementById('c-icon').textContent=card.icon;
+  document.getElementById('c-badge').textContent={
+    chance:'✨ CHANCE',malchance:'⚠️ MALCHANCE',
+    info:'💡 INFO',citoyens:'👥 CONCERTATION'}[kind];
+  document.getElementById('c-title').textContent=card.title;
+  document.getElementById('c-desc').textContent=card.desc;
+  const stat=document.getElementById('c-stat');
+  if(card.stat){stat.style.display='block';stat.innerHTML='📊 <strong>'+card.stat+'</strong>';}
+  else stat.style.display='none';
+  document.getElementById('c-pills').innerHTML=(card.pills||[]).map(p=>`<span class="cp ${p.c}">${p.t}</span>`).join('');
+  const choices=document.getElementById('c-choices');
+  const ok=document.getElementById('c-ok');
+  if(card.choices){
+    choices.style.display='flex';ok.style.display='none';
+    choices.innerHTML=card.choices.map((ch,i)=>`
+      <button class="cc-btn" onclick="pickChoice(${i})">
+        <strong>${ch.label}</strong><span>${ch.desc}</span>
+      </button>`).join('');
+  } else {
+    choices.style.display='none';ok.style.display='block';
+  }
+  show('s-card');
+}
+
+function closeCard(){send({type:'card_closed'});}
+function pickChoice(i){send({type:'card_choice',choice:i});}
+
+// ══════════════════════════════════════════════
+// MINI KPIs
+// ══════════════════════════════════════════════
+function updateMiniKPIs(){
+  if(!G)return;
+  const kpis=document.getElementById('mini-kpis');
+  kpis.innerHTML=[
+    {e:'🌡',v:'+'+G.icu.toFixed(1)+'°',w:G.icu>=7},
+    {e:'💧',v:Math.round(G.eau)+'%',w:G.eau<10},
+    {e:'🌿',v:Math.round(G.bio)+'pt',w:G.bio<12},
+    {e:'💶',v:Math.round(G.bud/1000)+'k',w:G.bud<80000},
+    {e:'😊',v:Math.round(G.sat)+'pt',w:G.sat<25}
+  ].map(k=>`<div class="mk${k.w?' warn':''}">
+    <div class="mk-val">${k.v}</div>
+    <div class="mk-lbl">${k.e}</div>
+  </div>`).join('');
+}
+
+function updateTourInfo(){
+  if(!G)return;
+  document.getElementById('t-tour').textContent=`${G.tour} / 6`;
+  document.getElementById('t-zones').textContent=`${G.zonesDone}/12`;
+}
+
+// ══════════════════════════════════════════════
+// BILAN
+// ══════════════════════════════════════════════
+function showBilan(defeat){
+  if(!G)return;
+  const sI=defeat&&G.icu>=8?0:Math.max(0,30*(6.2-G.icu)/6.2);
+  const sE=Math.max(0,25*G.eau/100);
+  const sB=Math.max(0,25*G.bio/80);
+  const sF=Math.max(0,20*G.bud/350000);
+  const total=Math.max(0,Math.round(sI+sE+sB+sF));
+  const finalScore=defeat?0:total;
+
+  const ring=document.getElementById('s-fill-ring');
+  setTimeout(()=>{if(ring)ring.style.strokeDashoffset=396-(396*(finalScore/100));},300);
+  const numEl=document.getElementById('b-score');
+  let cur=0;const st=Math.max(1,Math.ceil(finalScore/50));
+  const cnt=setInterval(()=>{cur=Math.min(cur+st,finalScore);numEl.textContent=cur;if(cur>=finalScore)clearInterval(cnt);},30);
+
+  const lvls=[
+    {min:80,lv:'Excellent 🏆',msg:'Saint-Jean est devenu un quartier de référence.'},
+    {min:60,lv:'Bien 👍',msg:'Le quartier est en bonne voie.'},
+    {min:40,lv:'Moyen ⚡',msg:'Des progrès réels mais insuffisants.'},
+    {min:0,lv:'Insuffisant 💥',msg:'La crise a eu raison du quartier.'}
+  ];
+  const lv=defeat?{lv:'Défaite 💥',msg:'Le mandat s\'arrête prématurément.'}:lvls.find(l=>finalScore>=l.min);
+  document.getElementById('b-lv').textContent=lv.lv;
+  document.getElementById('b-msg').textContent=lv.msg;
+  const icuR=+(6.2-G.icu).toFixed(1);
+  document.getElementById('b-kpis').innerHTML=[
+    {v:(icuR>0?'-':'')+icuR+'°C',l:'ICU réduit',c:'#C0392B'},
+    {v:Math.round(G.eau)+'%',l:'Infiltration',c:'#3E7B92'},
+    {v:Math.round(G.bio)+'pts',l:'Biodiversité',c:'#2D5F3F'},
+    {v:G.zonesDone+'/12',l:'Zones',c:'#A57F4F'}
+  ].map(k=>`<div class="bk"><div class="bk-val" style="color:${k.c}">${k.v}</div><div class="bk-lbl">${k.l}</div></div>`).join('');
+  show('s-bilan');
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function showToast(msg,cls=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show '+(cls||'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// Écouter aussi les messages de l'hôte pour show_action
+const _onData=onData;
+onData=function(msg){
+  if(msg.type==='show_action'){showActionOnCell(msg);return;}
+  _onData(msg);
+};
+</script>
+</body>
+</html>
