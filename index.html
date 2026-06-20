@@ -1,0 +1,2590 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sauvez le Quartier — P26</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Palette écologique — inspirée nature & terre */
+  --paper:#FAF7F0;        /* papier crème clair */
+  --paper2:#F4EFE3;       /* papier ombre */
+  --paper3:#EBE3D0;       /* papier vieilli */
+  --paper4:#DDD3BA;       /* parchemin */
+  
+  --leaf:#2D5F3F;         /* vert feuille profond */
+  --leaf2:#4A8B5C;        /* vert feuille moyen */
+  --leaf3:#7AB088;        /* vert feuille clair */
+  --leaf4:#C8DEC9;        /* vert pâle */
+  --leaf5:#E8F2E5;        /* vert très pâle */
+  
+  --moss:#5C7340;         /* mousse */
+  --moss2:#7A9355;
+  
+  --bark:#5C4530;         /* écorce */
+  --bark2:#876547;
+  --earth:#A57F4F;        /* terre */
+  --earth2:#C9A570;
+  
+  --water:#3E7B92;        /* eau */
+  --water2:#6BA3B8;
+  --water3:#B8D4DC;
+  
+  --sky:#7BA7C9;          /* ciel */
+  --sun:#E8B547;          /* soleil */
+  --sun2:#F5D079;
+  
+  --warn:#C0594A;         /* alerte */
+  --warn2:#D97862;
+  --warn3:#F4D8D1;
+  
+  --ink:#2A2620;          /* encre noir-terre */
+  --ink2:#4F4538;
+  --ink3:#7A6E5C;
+  --ink4:#A89C82;
+  --ink5:#C8BCA1;
+  
+  --display:'Fraunces',serif;
+  --ui:'Inter',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  
+  --r4:6px;--r8:10px;--r12:14px;--r16:18px;
+  --shadow:0 1px 3px rgba(42,38,32,.06),0 4px 12px rgba(42,38,32,.08);
+  --shadow-md:0 4px 16px rgba(42,38,32,.1),0 1px 4px rgba(42,38,32,.08);
+  --shadow-lg:0 10px 36px rgba(42,38,32,.14),0 2px 10px rgba(42,38,32,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(--ui);overflow:hidden}
+
+/* ── Texture papier organique ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.30 0 0 0 0 0.20 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.screen{display:none;position:fixed;inset:0;z-index:1}
+.screen.active{display:flex}
+
+/* Sur mobile, position:fixed bloque le scroll — on passe en relative */
+@media(max-width:768px){
+  .screen{position:relative;inset:auto;min-height:100vh}
+  #s-pioche{position:relative;min-height:100vh}
+}
+
+/* ═════════════════════════════════════════
+   S1 — ACCUEIL (style carnet d'écologue)
+═════════════════════════════════════════ */
+#s1{flex-direction:column;align-items:center;justify-content:center;background:var(--paper);overflow-y:auto;position:relative}
+
+/* Motif organique de fond */
+#s1::after{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.6;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%237AB088' stroke-width='0.5' opacity='0.4'%3E%3Cpath d='M30 50 Q50 30 70 50 T110 50' /%3E%3Cpath d='M130 100 Q150 80 170 100' /%3E%3Cpath d='M50 150 Q70 130 90 150 T130 150' /%3E%3Ccircle cx='160' cy='40' r='3'/%3E%3Ccircle cx='40' cy='110' r='2'/%3E%3Ccircle cx='180' cy='160' r='2.5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:200px;
+}
+
+.s1-inner{position:relative;z-index:2;max-width:720px;width:100%;padding:48px 40px;text-align:center}
+
+.s1-logo{display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.2em;
+  color:var(--leaf);text-transform:uppercase;margin-bottom:28px;
+  padding:8px 18px;background:var(--leaf5);
+  border:1px solid var(--leaf3);border-radius:30px}
+.s1-logo svg{width:14px;height:14px;flex-shrink:0}
+
+.s1-title{font-family:var(--display);font-size:clamp(56px,9vw,108px);
+  font-weight:900;line-height:.88;letter-spacing:-.03em;
+  color:var(--ink);margin-bottom:8px;font-variation-settings:"opsz" 144}
+.s1-title em{font-style:italic;color:var(--leaf);font-weight:400}
+
+.s1-tagline{font-family:var(--display);font-style:italic;font-size:18px;
+  color:var(--ink3);margin-bottom:12px;letter-spacing:.01em}
+.s1-authors{font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  color:var(--ink3);margin-bottom:36px;text-transform:uppercase}
+.s1-authors strong{color:var(--leaf);font-weight:700}
+
+/* Carnet de contexte */
+.s1-context{background:var(--paper);border:1px solid var(--paper4);
+  border-radius:var(--r12);padding:24px 28px;text-align:left;
+  margin-bottom:32px;box-shadow:var(--shadow-md);position:relative;
+  background-image:
+    linear-gradient(90deg,transparent 0%,transparent 36px,rgba(180,150,90,.1) 36px,rgba(180,150,90,.1) 37px,transparent 37px),
+    repeating-linear-gradient(transparent,transparent 22px,rgba(122,178,140,.08) 22px,rgba(122,178,140,.08) 23px);
+  background-size:100% 100%}
+.s1-ctag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--leaf);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px}
+.s1-ctag::before{content:'';width:6px;height:6px;background:var(--leaf);
+  border-radius:50%;flex-shrink:0}
+.s1-ctext{font-size:14px;color:var(--ink2);line-height:1.8;
+  padding-left:8px;border-left:2px solid var(--leaf3)}
+
+/* Sélection joueurs */
+.s1-config{margin-bottom:36px}
+.s1-cfg-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:14px}
+.s1-pbtns{display:flex;gap:8px;justify-content:center}
+.pbtn{width:52px;height:52px;background:var(--paper);
+  border:1.5px solid var(--ink5);color:var(--ink3);
+  font-family:var(--mono);font-size:18px;font-weight:600;
+  border-radius:var(--r4);cursor:pointer;transition:all .2s;
+  box-shadow:var(--shadow)}
+.pbtn:hover{border-color:var(--leaf);color:var(--leaf);transform:translateY(-2px)}
+.pbtn.sel{background:var(--leaf);border-color:var(--leaf);color:var(--paper);
+  box-shadow:0 4px 12px rgba(45,95,63,.3)}
+
+.s1-start{background:var(--leaf);color:var(--paper);
+  font-family:var(--display);font-size:20px;font-weight:700;
+  padding:18px 52px;border:none;border-radius:50px;
+  cursor:pointer;transition:all .25s;letter-spacing:.01em;
+  box-shadow:0 6px 20px rgba(45,95,63,.25);
+  display:inline-flex;align-items:center;gap:10px}
+.s1-start:hover{background:var(--leaf2);transform:translateY(-3px);
+  box-shadow:0 10px 30px rgba(45,95,63,.35)}
+.s1-start svg{width:18px;height:18px}
+
+/* ═════════════════════════════════════════
+   S2 — RÔLES
+═════════════════════════════════════════ */
+#s2{flex-direction:column;align-items:center;background:var(--paper2);
+  padding:32px 24px;overflow-y:auto}
+.s2-head{text-align:center;margin-bottom:32px;max-width:600px}
+.s2-num{font-family:var(--mono);font-size:11px;letter-spacing:.25em;
+  color:var(--leaf);text-transform:uppercase;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:center;gap:10px}
+.s2-num::before,.s2-num::after{content:'';flex:0 0 30px;height:1px;background:var(--leaf3)}
+.s2-title{font-family:var(--display);font-size:42px;font-weight:700;
+  color:var(--ink);margin-bottom:8px;letter-spacing:-.01em}
+.s2-sub{font-family:var(--display);font-style:italic;font-size:15px;
+  color:var(--ink3);line-height:1.6}
+
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:16px;max-width:1100px;width:100%;margin-bottom:24px}
+
+/* Barre de progression de choix des rôles */
+.role-progress{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:24px;max-width:700px}
+.rp-slot{display:flex;align-items:center;gap:8px;padding:8px 14px;
+  background:var(--paper);border:1.5px solid var(--paper4);border-radius:30px;
+  transition:all .25s;box-shadow:var(--shadow)}
+.rp-slot.filled{border-color:var(--leaf);background:var(--leaf5)}
+.rp-slot.active{border-color:var(--sun);background:#FDF4DC;
+  animation:rpPulse 1.5s infinite}
+@keyframes rpPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,181,71,.4)}50%{box-shadow:0 0 0 6px rgba(232,181,71,0)}}
+.rp-num{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink3)}
+.rp-slot.filled .rp-num{color:var(--leaf)}
+.rp-icon{font-size:18px}
+.rp-name{font-size:12px;font-weight:600;color:var(--ink2);white-space:nowrap}
+.rp-empty{font-family:var(--display);font-style:italic;font-size:12px;color:var(--ink4)}
+
+/* États des cartes de rôle pour sélection */
+.role-card{cursor:pointer}
+.role-card.taken{opacity:.4;pointer-events:none;filter:grayscale(.6)}
+.role-card.taken::after{content:'✓ PRIS';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:13px;letter-spacing:.2em;font-weight:700;
+  color:var(--paper);background:rgba(45,95,63,.75);border-radius:var(--r12)}
+.role-card.taken .taken-by{position:absolute;bottom:12px;left:0;right:0;
+  text-align:center;font-family:var(--display);font-style:italic;font-size:12px;
+  color:var(--paper);z-index:2}
+.role-card.selectable:hover{transform:translateY(-6px) scale(1.02);
+  box-shadow:var(--shadow-lg);border-color:var(--leaf)}
+
+/* Boutons d'action S2 */
+.s2-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  justify-content:center;margin-bottom:40px}
+.btn-secondary-role{background:var(--paper);border:1.5px solid var(--ink5);
+  color:var(--ink2);font-family:var(--ui);font-size:13px;font-weight:600;
+  padding:13px 22px;border-radius:50px;cursor:pointer;transition:all .2s;
+  box-shadow:var(--shadow);display:inline-flex;align-items:center;gap:8px}
+.btn-secondary-role:hover{border-color:var(--leaf);color:var(--leaf);transform:translateY(-2px)}
+.btn-launch:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+.btn-launch:disabled::after{display:none}
+
+
+.role-card{background:var(--paper);border:1px solid var(--paper4);
+  border-radius:var(--r12);overflow:hidden;box-shadow:var(--shadow);
+  transition:all .25s;position:relative}
+.role-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.role-card.inactive{opacity:.35;pointer-events:none;filter:saturate(.4)}
+.role-card.inactive::after{content:'NON ACTIF';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;letter-spacing:.25em;
+  color:var(--ink3);background:rgba(244,239,227,.7)}
+
+.rc-stripe{height:5px;width:100%}
+.rc-head{padding:16px 16px 12px;border-bottom:1px solid var(--paper4);position:relative}
+.rc-head::after{content:'';position:absolute;bottom:-1px;left:16px;right:16px;
+  height:1px;background:linear-gradient(90deg,transparent,var(--ink5),transparent)}
+.rc-icon-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:6px}
+.rc-icon-circle{width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;flex-shrink:0;box-shadow:var(--shadow)}
+.rc-title-block{flex:1;min-width:0}
+.rc-name{font-family:var(--display);font-size:17px;font-weight:700;
+  color:var(--ink);line-height:1.15;margin-bottom:4px}
+.rc-tag{font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;padding:2px 8px;border-radius:20px;
+  display:inline-block}
+
+.rc-body{padding:14px 16px}
+.rc-desc{font-size:12px;color:var(--ink2);line-height:1.65;
+  margin-bottom:14px;font-family:var(--display);font-style:italic}
+
+.rc-section{margin-bottom:12px}
+.rc-section-title{font-family:var(--mono);font-size:8px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink4);margin-bottom:6px;
+  display:flex;align-items:center;gap:6px}
+.rc-section-title::before{content:'◆';font-size:6px;color:currentColor}
+.rc-obj-text{font-size:12px;color:var(--ink);line-height:1.5;
+  padding:8px 10px;background:var(--paper2);border-radius:var(--r4);
+  border-left:3px solid currentColor;font-weight:500}
+
+.rc-pow-box{background:var(--paper2);border:1px solid var(--paper4);
+  border-radius:var(--r4);padding:9px 11px}
+.rc-pow-name{font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.rc-pow-desc{font-size:11px;color:var(--ink2);line-height:1.5}
+
+.btn-launch{background:var(--leaf);color:var(--paper);
+  font-family:var(--display);font-size:18px;font-weight:700;
+  padding:15px 50px;border:none;border-radius:50px;
+  cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(45,95,63,.25);
+  display:inline-flex;align-items:center;gap:10px}
+.btn-launch:hover{background:var(--leaf2);transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(45,95,63,.35)}
+
+/* ═════════════════════════════════════════
+   S3 — JEU (plateau circulaire)
+═════════════════════════════════════════ */
+#s3{flex-direction:row;overflow:hidden;background:var(--paper)}
+
+.col-l{width:290px;flex-shrink:0;background:var(--paper);
+  border-right:1px solid var(--paper4);display:flex;flex-direction:column;
+  overflow:hidden;box-shadow:1px 0 0 0 var(--paper3)}
+.col-c{flex:1;display:flex;flex-direction:column;overflow:hidden;
+  min-width:0;background:var(--paper2)}
+.col-r{width:260px;flex-shrink:0;background:var(--paper);
+  border-left:1px solid var(--paper4);display:flex;flex-direction:column;
+  overflow:hidden}
+
+/* Header */
+.ghdr{background:var(--leaf);padding:12px 18px;display:flex;align-items:center;
+  justify-content:space-between;flex-shrink:0;min-height:50px;position:relative}
+.ghdr::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,var(--leaf2),var(--leaf3),var(--leaf2))}
+.ghdr-title{font-family:var(--display);font-size:17px;font-weight:700;
+  color:var(--paper);display:flex;align-items:center;gap:8px}
+.ghdr-title svg{width:18px;height:18px}
+.ghdr-lbl{font-family:var(--mono);font-size:10px;color:rgba(250,247,240,.7);
+  letter-spacing:.12em}
+.tour-dots{display:flex;gap:5px}
+.tdot{width:22px;height:5px;border-radius:3px;background:rgba(250,247,240,.25);
+  transition:all .4s}
+.tdot.done{background:rgba(250,247,240,.7)}
+.tdot.active{background:var(--paper);box-shadow:0 0 8px rgba(250,247,240,.5)}
+
+/* Progress mandat */
+.mandat-wrap{padding:14px 16px;border-bottom:1px solid var(--paper4);
+  background:var(--paper2);flex-shrink:0}
+.mandat-row{display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:6px}
+.mandat-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  color:var(--ink3);text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.mandat-val{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink)}
+.mandat-track{height:7px;background:var(--paper3);border-radius:4px;
+  overflow:hidden;position:relative;border:1px solid var(--paper4)}
+.mandat-fill{height:100%;background:linear-gradient(90deg,var(--warn),var(--sun),var(--leaf2));
+  transition:width .6s;border-radius:3px}
+.mandat-marker{position:absolute;top:-3px;bottom:-3px;width:2px;
+  background:var(--ink);left:50%}
+.mandat-marker::before{content:'';position:absolute;top:-5px;left:-3px;
+  width:8px;height:8px;background:var(--ink);transform:rotate(45deg)}
+
+/* KPIs */
+.kpi-wrap{padding:14px 16px;border-bottom:1px solid var(--paper4);flex-shrink:0}
+.sec-title{font-family:var(--mono);font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:14px;
+  display:flex;align-items:center;gap:6px}
+.sec-title::before{content:'◆';font-size:7px;color:var(--leaf2)}
+.kpi-item{margin-bottom:11px}
+.kpi-top{display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:5px}
+.kpi-lbl{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.kpi-lbl .kpi-emoji{font-size:14px}
+.kpi-val{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--ink)}
+.kpi-track{height:5px;background:var(--paper3);border-radius:3px;overflow:hidden;
+  border:1px solid var(--paper4)}
+.kpi-bar{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.kpi-warn{color:var(--warn)!important;animation:kw 1s infinite}
+@keyframes kw{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Action panel */
+.action-panel{flex:1;overflow-y:auto;padding:16px}
+.curr-player{padding:14px;background:var(--paper2);border-radius:var(--r12);
+  margin-bottom:14px;border:1px solid var(--paper4);position:relative;overflow:hidden}
+.curr-player::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px}
+.cp-label{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  color:var(--ink3);text-transform:uppercase;margin-bottom:8px}
+.cp-row{display:flex;align-items:center;gap:10px}
+.cp-icon-circle{width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  box-shadow:var(--shadow)}
+.cp-name{font-family:var(--display);font-size:15px;font-weight:700;flex:1;color:var(--ink)}
+
+/* Dé */
+.dice-section{text-align:center;margin-bottom:14px}
+.dice-label{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  color:var(--ink3);text-transform:uppercase;margin-bottom:10px}
+.dice-box{width:72px;height:72px;background:var(--paper);
+  border:2.5px solid var(--ink);border-radius:var(--r8);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;font-family:var(--mono);font-size:32px;font-weight:700;
+  color:var(--ink);box-shadow:var(--shadow-md);transition:transform .3s;cursor:pointer;
+  position:relative}
+.dice-box.rolling{animation:diceR .5s linear}
+@keyframes diceR{0%,100%{transform:rotate(0)}25%{transform:rotate(-18deg) scale(1.12)}50%{transform:rotate(12deg) scale(1.12)}75%{transform:rotate(-6deg)}}
+
+.dice-btn{width:100%;background:var(--leaf);color:var(--paper);
+  font-family:var(--display);font-size:15px;font-weight:700;
+  padding:12px;border:none;border-radius:var(--r4);cursor:pointer;
+  transition:all .15s;box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:center;gap:8px}
+.dice-btn:hover:not(:disabled){background:var(--leaf2);transform:translateY(-1px)}
+.dice-btn:disabled{opacity:.35;cursor:not-allowed;background:var(--paper3);color:var(--ink3)}
+
+.move-help{font-size:11px;color:var(--ink3);margin-top:10px;
+  text-align:center;line-height:1.5;font-style:italic;font-family:var(--display)}
+
+.action-choices{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.act-choice{background:var(--paper);border:1px solid var(--paper4);
+  border-radius:var(--r8);padding:11px 13px;cursor:pointer;
+  transition:all .15s;text-align:left;box-shadow:var(--shadow);
+  position:relative;overflow:hidden}
+.act-choice::before{content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:transparent;transition:background .15s}
+.act-choice:hover:not(:disabled){border-color:var(--leaf3);transform:translateX(3px)}
+.act-choice:hover:not(:disabled)::before{background:var(--leaf2)}
+.act-choice:disabled{opacity:.4;cursor:not-allowed}
+.act-c-name{font-size:13px;font-weight:600;margin-bottom:4px;
+  display:flex;align-items:center;gap:6px;color:var(--ink)}
+.act-c-desc{font-size:11px;color:var(--ink2);line-height:1.5}
+.act-c-cost{font-family:var(--mono);font-size:10px;color:var(--earth);
+  margin-top:5px;padding-top:5px;border-top:1px dashed var(--paper4)}
+
+/* ═════════════════════════════════════════
+   PLATEAU CIRCULAIRE
+═════════════════════════════════════════ */
+.board-wrap{flex:1;display:flex;align-items:center;justify-content:center;
+  padding:20px;position:relative;overflow:auto}
+
+.board-grid{display:grid;grid-template-columns:repeat(7,1fr);
+  grid-template-rows:repeat(7,1fr);gap:4px;background:var(--leaf);
+  padding:8px;border-radius:var(--r12);box-shadow:var(--shadow-lg);
+  width:min(580px,calc(100vh - 220px));aspect-ratio:1;position:relative}
+
+/* Cellule de base */
+.cell{background:var(--paper);border-radius:5px;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;
+  position:relative;font-size:11px;padding:3px;overflow:hidden;
+  transition:all .25s;cursor:default}
+
+.cell.path{cursor:default}
+.cell.reachable{outline:2.5px solid var(--leaf);outline-offset:-2px;
+  cursor:pointer;animation:pulseR 1.4s infinite;z-index:3}
+@keyframes pulseR{0%,100%{outline-color:var(--leaf);transform:scale(1)}
+  50%{outline-color:var(--leaf3);transform:scale(1.03)}}
+
+.cell.current-pos{outline:3px solid var(--sun);outline-offset:-3px;z-index:4}
+
+.cell-icon{font-size:20px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.1))}
+.cell-label{font-family:var(--mono);font-size:7px;letter-spacing:.05em;
+  color:var(--ink3);text-align:center;margin-top:2px;line-height:1.1;
+  font-weight:500}
+
+/* Couleurs des types de cases */
+.cell-imp{background:linear-gradient(135deg,#C8C0AC 0%,#B8AE94 100%)}
+.cell-imp .cell-label{color:var(--ink2)}
+.cell-veg-existing{background:linear-gradient(135deg,var(--leaf4) 0%,var(--leaf3) 100%)}
+.cell-arbre{background:linear-gradient(135deg,var(--leaf3) 0%,var(--moss2) 100%)}
+.cell-mairie{background:linear-gradient(135deg,var(--ink) 0%,var(--ink2) 100%);color:var(--paper)}
+.cell-mairie .cell-label{color:rgba(250,247,240,.7)}
+.cell-mairie-sec{background:linear-gradient(135deg,var(--ink2) 0%,var(--ink3) 100%);color:var(--paper)}
+.cell-mairie-sec .cell-label{color:rgba(250,247,240,.6)}
+.cell-info{background:linear-gradient(135deg,var(--water3) 0%,var(--water2) 100%)}
+.cell-info .cell-label{color:var(--water)}
+.cell-citoyens{background:linear-gradient(135deg,#E8DCC2 0%,#D4C5A0 100%)}
+.cell-citoyens .cell-label{color:var(--bark)}
+.cell-chance{background:linear-gradient(135deg,var(--leaf5) 0%,var(--leaf4) 100%);
+  border:1.5px solid var(--leaf3)}
+.cell-chance .cell-label{color:var(--leaf)}
+.cell-malchance{background:linear-gradient(135deg,var(--warn3) 0%,#E8B5AB 100%);
+  border:1.5px solid var(--warn)}
+.cell-malchance .cell-label{color:var(--warn)}
+
+/* Centre du plateau — Le quartier qui se transforme */
+.center-block{grid-column:2/7;grid-row:2/7;background:var(--paper2);
+  border-radius:var(--r8);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:20px;
+  box-shadow:inset 0 2px 8px rgba(42,38,32,.08);position:relative;overflow:hidden}
+
+.center-quartier{width:100%;height:100%;position:relative;
+  display:flex;align-items:center;justify-content:center}
+
+.center-title{font-family:var(--display);font-size:14px;font-weight:600;
+  color:var(--ink);text-align:center;margin-bottom:8px;font-style:italic}
+
+.center-progress{font-family:var(--mono);font-size:42px;font-weight:700;
+  color:var(--leaf);line-height:1;margin-bottom:6px}
+.center-progress-sub{font-family:var(--mono);font-size:10px;letter-spacing:.15em;
+  color:var(--ink3);text-transform:uppercase;margin-bottom:14px}
+
+.center-trees{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  max-width:200px;margin-bottom:10px}
+.center-tree{font-size:18px;opacity:.3;transition:all .5s}
+.center-tree.grown{opacity:1;animation:treeGrow .6s cubic-bezier(.34,1.56,.64,1)}
+@keyframes treeGrow{0%{transform:scale(0)}100%{transform:scale(1)}}
+
+.center-stat-row{display:flex;gap:14px;font-family:var(--mono);font-size:10px;
+  color:var(--ink2);justify-content:center}
+.center-stat{text-align:center}
+.center-stat-val{font-size:14px;font-weight:700;color:var(--leaf);display:block}
+
+/* Pions */
+.pawn{position:absolute;width:16px;height:16px;border-radius:50%;
+  border:2.5px solid var(--paper);box-shadow:0 2px 6px rgba(0,0,0,.25);
+  z-index:5;transition:all .5s cubic-bezier(.4,0,.2,1)}
+.pawn.current{box-shadow:0 0 0 3px rgba(232,181,71,.5),0 4px 10px rgba(0,0,0,.25);
+  animation:pawnP 1.5s infinite}
+@keyframes pawnP{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* Légende rétractable */
+.board-legend{position:absolute;top:24px;right:24px;background:var(--paper);
+  border:1px solid var(--paper4);border-radius:var(--r8);
+  box-shadow:var(--shadow);font-family:var(--ui);
+  transition:all .3s ease;overflow:hidden;z-index:10}
+.board-legend.collapsed{padding:0}
+.board-legend.collapsed .legend-content{display:none}
+.legend-toggle{width:100%;background:none;border:none;cursor:pointer;
+  padding:10px 12px;display:flex;align-items:center;justify-content:space-between;
+  gap:8px;font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--leaf);transition:background .15s;
+  min-width:120px}
+.legend-toggle:hover{background:var(--leaf5)}
+.legend-toggle-icon{font-size:11px;transition:transform .3s;display:inline-block}
+.board-legend.collapsed .legend-toggle-icon{transform:rotate(-90deg)}
+.legend-content{padding:0 12px 10px;max-width:160px}
+.legend-title{display:none}
+.legend-row{display:flex;align-items:center;gap:6px;font-size:9px;
+  color:var(--ink2);margin-bottom:4px}
+.legend-sq{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+
+/* Sit bar */
+.sit-bar{background:var(--paper);border-top:1px solid var(--paper4);
+  padding:12px 22px;flex-shrink:0;min-height:64px;display:flex;
+  align-items:center;gap:14px;box-shadow:0 -2px 8px rgba(42,38,32,.05)}
+.sit-icon-circle{width:42px;height:42px;border-radius:50%;
+  background:var(--leaf5);border:2px solid var(--leaf3);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  flex-shrink:0}
+.sit-content{flex:1;min-width:0}
+.sit-badge{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  color:var(--leaf);text-transform:uppercase;margin-bottom:4px}
+.sit-text{font-size:13px;color:var(--ink);line-height:1.5}
+
+/* Right col — joueurs + journal */
+.players-list{padding:14px 16px;border-bottom:1px solid var(--paper4);flex-shrink:0}
+.player-row{display:flex;align-items:center;gap:8px;padding:8px 10px;
+  border-radius:var(--r4);margin-bottom:6px;background:var(--paper2);
+  border:1px solid var(--paper4);transition:all .15s}
+.player-row.is-current{border-color:var(--leaf);background:var(--leaf5);
+  box-shadow:0 2px 6px rgba(45,95,63,.1)}
+.player-row.is-current .p-name{color:var(--leaf);font-weight:700}
+.p-color-dot{width:13px;height:13px;border-radius:50%;
+  border:2px solid var(--paper);box-shadow:0 0 0 1px var(--ink4);flex-shrink:0}
+.p-icon{font-size:16px}
+.p-info{flex:1;min-width:0}
+.p-name{font-size:11px;font-weight:500;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-pow{font-family:var(--mono);font-size:8px;color:var(--ink3);letter-spacing:.05em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pow-btn{background:var(--paper);border:1px solid var(--ink5);border-radius:3px;
+  padding:4px 7px;cursor:pointer;font-family:var(--mono);font-size:8px;
+  color:var(--ink2);transition:all .15s;white-space:nowrap;flex-shrink:0;
+  font-weight:600}
+.pow-btn:hover:not(:disabled){background:var(--leaf);color:var(--paper);border-color:var(--leaf)}
+.pow-btn.used{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+
+.journal-wrap{flex:1;overflow-y:auto;padding:14px 16px}
+.j-entry{font-family:var(--mono);font-size:10px;color:var(--ink3);
+  line-height:1.6;padding:6px 9px;margin-bottom:5px;border-radius:4px;
+  border-left:2px solid var(--paper4);animation:jIn .3s ease;background:var(--paper2)}
+@keyframes jIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+.j-entry.good{border-color:var(--leaf2);background:var(--leaf5);color:var(--leaf)}
+.j-entry.bad{border-color:var(--warn);background:var(--warn3);color:var(--warn)}
+.j-entry.event{border-color:var(--earth);background:#F5EBD8;color:var(--bark)}
+.j-entry.power{border-color:var(--water);background:var(--water3);color:var(--water)}
+.j-entry.info{border-color:var(--sun);background:#FDF4DC;color:var(--earth)}
+
+/* ═════════════════════════════════════════
+   S4 — CARTES (chance/malchance/info/citoyens)
+═════════════════════════════════════════ */
+#s4{flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(250,247,240,.97);backdrop-filter:blur(10px)}
+
+.card-display{background:var(--paper);border:1px solid var(--paper4);
+  border-radius:var(--r16);padding:42px 50px;max-width:560px;width:90%;
+  text-align:center;box-shadow:var(--shadow-lg);position:relative;
+  overflow:hidden;
+  animation:cardIn .5s cubic-bezier(.34,1.56,.64,1);
+  background-image:
+    repeating-linear-gradient(transparent,transparent 24px,rgba(122,178,140,.04) 24px,rgba(122,178,140,.04) 25px);
+  background-size:100% 100%}
+@keyframes cardIn{from{opacity:0;transform:translateY(30px) scale(.94)}to{opacity:1;transform:none}}
+
+.cd-stripe{position:absolute;top:0;left:0;right:0;height:5px}
+.card-display.chance .cd-stripe{background:linear-gradient(90deg,var(--leaf2),var(--leaf3),var(--leaf2))}
+.card-display.malchance .cd-stripe{background:linear-gradient(90deg,var(--warn),var(--warn2),var(--warn))}
+.card-display.info .cd-stripe{background:linear-gradient(90deg,var(--water),var(--water2),var(--water))}
+.card-display.citoyens .cd-stripe{background:linear-gradient(90deg,var(--earth),var(--earth2),var(--earth))}
+
+.cd-iconbox{width:80px;height:80px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;margin:0 auto 16px;
+  font-size:42px;box-shadow:var(--shadow-md);
+  animation:cdBounce .7s cubic-bezier(.34,1.56,.64,1)}
+@keyframes cdBounce{from{transform:scale(0)}to{transform:scale(1)}}
+.card-display.chance .cd-iconbox{background:var(--leaf5);border:2px solid var(--leaf3)}
+.card-display.malchance .cd-iconbox{background:var(--warn3);border:2px solid var(--warn2)}
+.card-display.info .cd-iconbox{background:var(--water3);border:2px solid var(--water2)}
+.card-display.citoyens .cd-iconbox{background:#F5EBD8;border:2px solid var(--earth2)}
+
+.cd-typebadge{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;padding:5px 14px;border-radius:30px;
+  display:inline-block;margin-bottom:14px;font-weight:600}
+.card-display.chance .cd-typebadge{background:var(--leaf5);color:var(--leaf)}
+.card-display.malchance .cd-typebadge{background:var(--warn3);color:var(--warn)}
+.card-display.info .cd-typebadge{background:var(--water3);color:var(--water)}
+.card-display.citoyens .cd-typebadge{background:#F5EBD8;color:var(--bark)}
+
+.cd-title{font-family:var(--display);font-size:32px;font-weight:900;
+  color:var(--ink);margin-bottom:12px;letter-spacing:-.01em;line-height:1.1}
+.cd-desc{font-size:14px;color:var(--ink2);line-height:1.75;margin-bottom:20px;
+  font-family:var(--display);font-style:italic}
+
+.cd-stat{background:var(--paper2);border-left:4px solid var(--water);
+  padding:12px 16px;font-size:13px;color:var(--ink2);text-align:left;
+  border-radius:0 var(--r8) var(--r8) 0;margin-bottom:24px;line-height:1.7}
+.cd-stat strong{color:var(--water);font-weight:700;font-family:var(--mono);font-size:14px}
+
+.cd-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+.cd-pill{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 14px;
+  border-radius:30px;display:flex;align-items:center;gap:5px}
+.cd-pill.neg{background:var(--warn3);color:var(--warn)}
+.cd-pill.pos{background:var(--leaf5);color:var(--leaf)}
+.cd-pill.info{background:var(--water3);color:var(--water)}
+
+.cd-choices{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.cd-choice{background:var(--paper);border:1.5px solid var(--paper4);
+  border-radius:var(--r8);padding:14px 18px;cursor:pointer;
+  transition:all .2s;text-align:left;box-shadow:var(--shadow);font-size:13px}
+.cd-choice:hover{border-color:var(--leaf);transform:translateX(3px);box-shadow:var(--shadow-md)}
+.cd-choice strong{font-family:var(--display);display:block;margin-bottom:4px;
+  color:var(--ink);font-size:15px}
+
+.cd-continue{background:var(--leaf);color:var(--paper);
+  font-family:var(--display);font-size:16px;font-weight:700;
+  padding:12px 38px;border:none;border-radius:50px;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 14px rgba(45,95,63,.25)}
+.cd-continue:hover{background:var(--leaf2);transform:translateY(-2px)}
+
+/* ═════════════════════════════════════════
+   S5 — BILAN
+═════════════════════════════════════════ */
+#s5{flex-direction:column;align-items:center;overflow-y:auto;
+  background:var(--paper);padding:48px 24px;position:relative}
+#s5::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  opacity:.5;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%237AB088' stroke-width='0.5' opacity='0.4'%3E%3Cpath d='M30 50 Q50 30 70 50 T110 50' /%3E%3Cpath d='M130 100 Q150 80 170 100' /%3E%3Cpath d='M50 150 Q70 130 90 150 T130 150' /%3E%3C/g%3E%3C/svg%3E");
+  background-size:240px}
+
+#s5>*{position:relative;z-index:1}
+
+.bilan-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.25em;
+  text-transform:uppercase;color:var(--leaf);text-align:center;margin-bottom:16px;
+  display:flex;align-items:center;gap:12px;max-width:480px;width:100%}
+.bilan-eyebrow::before,.bilan-eyebrow::after{content:'';flex:1;height:1px;background:var(--leaf3)}
+
+.bilan-title{font-family:var(--display);font-size:clamp(42px,6vw,68px);
+  font-weight:900;letter-spacing:-.02em;text-align:center;
+  color:var(--ink);margin-bottom:8px}
+.bilan-title em{font-style:italic;color:var(--leaf);font-weight:400}
+
+.score-ring-wrap{width:180px;height:180px;position:relative;margin:24px auto;flex-shrink:0}
+.srsvg{width:180px;height:180px;transform:rotate(-90deg)}
+.sr-track{fill:none;stroke:var(--paper3);stroke-width:6}
+.sr-fill{fill:none;stroke:var(--leaf);stroke-width:6;stroke-linecap:round;
+  transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1);
+  filter:drop-shadow(0 0 6px rgba(45,95,63,.3))}
+.score-center{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center}
+.score-num{font-family:var(--mono);font-size:48px;font-weight:700;
+  color:var(--leaf);line-height:1}
+.score-den{font-family:var(--mono);font-size:14px;color:var(--ink3)}
+
+.bilan-lv{font-family:var(--display);font-size:30px;font-weight:700;
+  text-align:center;color:var(--ink);margin-bottom:8px}
+.bilan-msg{font-family:var(--display);font-style:italic;font-size:15px;
+  color:var(--ink3);text-align:center;max-width:480px;line-height:1.75;margin:0 auto 32px}
+
+.bilan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;max-width:680px;width:100%;margin-bottom:32px}
+.bk{background:var(--paper);border:1px solid var(--paper4);
+  border-radius:var(--r12);padding:16px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.bk::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.bk-val{font-family:var(--mono);font-size:24px;font-weight:700;margin-bottom:4px}
+.bk-lbl{font-size:11px;color:var(--ink2);margin-bottom:4px;font-weight:500}
+.bk-ref{font-size:10px;color:var(--ink3);font-style:italic;font-family:var(--display)}
+
+.debrief-box{background:var(--paper);border:1px solid var(--paper4);
+  border-radius:var(--r12);padding:22px 26px;max-width:540px;width:100%;
+  margin-bottom:32px;box-shadow:var(--shadow);position:relative}
+.debrief-box::before{content:'';position:absolute;left:0;top:24px;bottom:24px;
+  width:3px;background:var(--leaf2)}
+.db-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--leaf);margin-bottom:14px}
+.db-q{font-family:var(--display);font-style:italic;font-size:14px;
+  color:var(--ink2);line-height:1.75;padding:8px 0 8px 14px;
+  margin-bottom:6px;position:relative}
+.db-q::before{content:'?';position:absolute;left:-4px;top:6px;
+  font-family:var(--display);font-size:18px;font-weight:700;color:var(--leaf2)}
+
+.btn-replay{background:var(--paper);border:2px solid var(--leaf);
+  color:var(--leaf);font-family:var(--display);font-size:18px;font-weight:700;
+  padding:14px 50px;border-radius:50px;cursor:pointer;
+  transition:all .25s;margin-bottom:48px;
+  display:inline-flex;align-items:center;gap:10px}
+.btn-replay:hover{background:var(--leaf);color:var(--paper);transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(45,95,63,.3)}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--paper);
+  border-radius:30px;padding:12px 22px;font-size:13px;z-index:9000;
+  transition:transform .3s cubic-bezier(.4,0,.2,1);max-width:420px;
+  text-align:center;box-shadow:var(--shadow-lg);font-weight:500}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.g{background:var(--leaf)}
+.toast.r{background:var(--warn)}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--paper2)}
+::-webkit-scrollbar-thumb{background:var(--ink5);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--leaf3)}
+/* ═════════════════════════════════════════
+   CHRONO DE DÉCISION
+═════════════════════════════════════════ */
+.decision-timer{background:var(--paper);border:2px solid var(--warn);
+  border-radius:var(--r12);padding:12px 14px;margin-bottom:14px;
+  text-align:center;position:relative;overflow:hidden;
+  animation:timerAppear .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes timerAppear{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.dt-label{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--warn);margin-bottom:6px;
+  display:flex;align-items:center;justify-content:center;gap:6px}
+.dt-label::before{content:'⏱';font-size:12px}
+.dt-time{font-family:var(--mono);font-size:34px;font-weight:700;
+  color:var(--warn);line-height:1;transition:color .3s}
+.dt-time.urgent{animation:timerUrgent .5s infinite}
+@keyframes timerUrgent{0%,100%{color:var(--warn);transform:scale(1)}50%{color:#8B1A0A;transform:scale(1.1)}}
+.dt-bar{height:5px;background:var(--paper3);border-radius:3px;margin-top:8px;overflow:hidden}
+.dt-bar-fill{height:100%;background:linear-gradient(90deg,var(--leaf2),var(--sun),var(--warn));
+  border-radius:3px;transition:width 1s linear}
+.dt-hint{font-family:var(--display);font-style:italic;font-size:11px;
+  color:var(--ink3);margin-top:8px;line-height:1.4}
+
+#s-pioche{display:none;position:fixed;inset:0;z-index:1;
+  flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(250,247,240,.97);backdrop-filter:blur(10px)}
+#s-pioche.active{display:flex}
+
+.pioche-title{font-family:var(--display);font-size:36px;font-weight:900;
+  color:var(--ink);margin-bottom:8px;text-align:center;letter-spacing:-.01em}
+.pioche-title em{font-style:italic;font-weight:400}
+.pioche-sub{font-family:var(--display);font-style:italic;font-size:15px;
+  color:var(--ink3);margin-bottom:40px;text-align:center}
+
+.pioche-deck{position:relative;width:100%;max-width:600px;height:280px;
+  display:flex;align-items:center;justify-content:center;margin-bottom:30px}
+
+/* Carte au dos (avant animation) */
+.deck-card{position:absolute;width:160px;height:230px;
+  border-radius:var(--r12);box-shadow:var(--shadow-lg);
+  cursor:pointer;transition:transform .5s cubic-bezier(.34,1.56,.64,1),
+  box-shadow .3s,opacity .3s;
+  display:flex;align-items:center;justify-content:center;
+  border:3px solid var(--paper);overflow:hidden;
+  transform-style:preserve-3d}
+
+/* Dos de la carte selon type */
+.deck-card.chance{background:linear-gradient(135deg,var(--leaf2) 0%,var(--leaf) 100%);
+  border-color:var(--leaf3)}
+.deck-card.malchance{background:linear-gradient(135deg,var(--warn2) 0%,var(--warn) 100%);
+  border-color:var(--warn2)}
+.deck-card.info{background:linear-gradient(135deg,var(--water2) 0%,var(--water) 100%);
+  border-color:var(--water2)}
+.deck-card.citoyens{background:linear-gradient(135deg,var(--earth2) 0%,var(--earth) 100%);
+  border-color:var(--earth2)}
+
+/* Motif décoratif au dos */
+.deck-card::before{content:'';position:absolute;inset:12px;
+  border:2px solid rgba(250,247,240,.4);border-radius:var(--r8);
+  pointer-events:none}
+.deck-card-back-symbol{font-size:64px;color:rgba(250,247,240,.85);
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));pointer-events:none}
+.deck-card-back-label{position:absolute;bottom:18px;left:0;right:0;
+  text-align:center;font-family:var(--mono);font-size:10px;
+  letter-spacing:.25em;color:rgba(250,247,240,.95);text-transform:uppercase;
+  font-weight:700;pointer-events:none}
+
+/* Animation : cartes qui s'étalent */
+.deck-card.spread-0{transform:translateX(-180px) rotate(-12deg)}
+.deck-card.spread-1{transform:translateX(0) rotate(0deg);z-index:2}
+.deck-card.spread-2{transform:translateX(180px) rotate(12deg)}
+
+/* Hover pour choisir (Chance uniquement) */
+.deck-card.choosable{cursor:pointer}
+.deck-card.choosable:hover{transform:scale(1.06) translateY(-10px);
+  box-shadow:0 16px 40px rgba(0,0,0,.25);z-index:5}
+.deck-card.choosable.spread-0:hover{transform:translateX(-180px) rotate(-12deg) scale(1.06) translateY(-10px)}
+.deck-card.choosable.spread-1:hover{transform:translateX(0) rotate(0deg) scale(1.06) translateY(-10px)}
+.deck-card.choosable.spread-2:hover{transform:translateX(180px) rotate(12deg) scale(1.06) translateY(-10px)}
+
+/* Carte sélectionnée qui vole vers le centre */
+.deck-card.flying{transform:translate(0,0) rotate(0deg) scale(1.1)!important;
+  z-index:10;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+
+/* Carte qui se flippe pour révéler */
+.deck-card.flipping{animation:cardFlip .8s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes cardFlip{
+  0%{transform:translate(0,0) rotateY(0deg) scale(1.1)}
+  50%{transform:translate(0,-20px) rotateY(90deg) scale(1.15)}
+  100%{transform:translate(0,0) rotateY(180deg) scale(0)}
+}
+
+/* Cartes non-choisies qui s'effacent */
+.deck-card.fade-out{opacity:0;transform:scale(.9)}
+
+.pioche-instruction{font-family:var(--mono);font-size:11px;letter-spacing:.15em;
+  color:var(--ink3);text-transform:uppercase;text-align:center;margin-top:8px;
+  padding:8px 16px;background:var(--paper);border:1px solid var(--paper4);
+  border-radius:30px;display:inline-flex;align-items:center;gap:8px}
+.pioche-instruction::before{content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--leaf);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+
+/* Couche de particules globale */
+#fx-canvas{position:fixed;inset:0;pointer-events:none;z-index:9998}
+
+/* Floating points (+5 pts qui montent) */
+.float-pt{position:fixed;font-family:var(--mono);font-size:18px;font-weight:700;
+  pointer-events:none;z-index:9997;animation:floatUp 1.5s ease-out forwards;
+  text-shadow:0 2px 8px rgba(0,0,0,.3)}
+@keyframes floatUp{
+  0%{opacity:0;transform:translateY(0) scale(.5)}
+  20%{opacity:1;transform:translateY(-20px) scale(1.1)}
+  100%{opacity:0;transform:translateY(-80px) scale(1)}
+}
+.float-pt.pos{color:var(--leaf)}
+.float-pt.neg{color:var(--warn)}
+.float-pt.info{color:var(--water)}
+
+/* Pion qui rebondit en arrivant */
+@keyframes pawnLand{
+  0%{transform:scale(1)}
+  30%{transform:scale(1.4) translateY(-4px)}
+  50%{transform:scale(.9)}
+  70%{transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
+.pawn.landed{animation:pawnLand .6s cubic-bezier(.34,1.56,.64,1)}
+
+/* Effet "transformed" sur la case — pulsation initiale */
+@keyframes transformPulse{
+  0%{box-shadow:0 0 0 0 rgba(122,176,136,.8);transform:scale(1)}
+  50%{box-shadow:0 0 0 20px rgba(122,176,136,0);transform:scale(1.05)}
+  100%{box-shadow:0 0 0 30px rgba(122,176,136,0);transform:scale(1)}
+}
+.cell.just-transformed{animation:transformPulse 1s ease-out}
+
+/* Glow sur le joueur actif (carte de droite) */
+.player-row.is-current{animation:currentGlow 2s ease-in-out infinite}
+@keyframes currentGlow{
+  0%,100%{box-shadow:0 2px 6px rgba(45,95,63,.15)}
+  50%{box-shadow:0 4px 16px rgba(45,95,63,.35)}
+}
+
+/* Pulsation des indicateurs quand ils changent */
+.kpi-val.changing{animation:kpiPop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes kpiPop{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.3);color:var(--leaf)}
+  100%{transform:scale(1)}
+}
+
+/* Effet shine sur les boutons */
+.dice-btn,.s1-start,.btn-launch{position:relative;overflow:hidden}
+.dice-btn::after,.s1-start::after,.btn-launch::after{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  transition:left .6s}
+.dice-btn:hover::after,.s1-start:hover::after,.btn-launch:hover::after{left:100%}
+
+/* Dé qui se met en valeur quand on attend qu'on clique dessus */
+.dice-box:not(.rolling){animation:diceWait 2s ease-in-out infinite}
+@keyframes diceWait{
+  0%,100%{box-shadow:var(--shadow-md)}
+  50%{box-shadow:0 0 20px rgba(45,95,63,.4),var(--shadow-md)}
+}
+
+/* Effet sur tirage de carte — flash */
+@keyframes cardFlash{
+  0%{opacity:0}
+  50%{opacity:.6}
+  100%{opacity:0}
+}
+#card-flash{position:fixed;inset:0;background:white;pointer-events:none;
+  z-index:8500;opacity:0}
+#card-flash.flash{animation:cardFlash .4s ease-out}
+
+/* Effet tampon sur "Mandat" */
+.mandat-fill{position:relative;overflow:hidden}
+.mandat-fill::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
+  animation:mandatShine 3s ease-in-out infinite}
+@keyframes mandatShine{
+  0%,100%{left:-100%}
+  50%{left:100%}
+}
+
+/* Arbres du centre — animation de pousse plus riche */
+.center-tree{transform-origin:bottom center}
+.center-tree.grown{animation:treePopGrow .8s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes treePopGrow{
+  0%{opacity:0;transform:scale(0) translateY(10px)}
+  60%{opacity:1;transform:scale(1.3) translateY(-3px)}
+  100%{opacity:1;transform:scale(1) translateY(0)}
+}
+
+/* Vibration discrète sur action validée */
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-2px)}
+  75%{transform:translateX(2px)}
+}
+.shake{animation:shake .3s}
+
+/* Compteur de score qui pulse en montant */
+.score-num{transition:transform .2s}
+.score-num.pulse{animation:scorePulse .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes scorePulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
+
+/* Overlay tour-change : transition entre joueurs */
+#turn-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  z-index:8800;pointer-events:none;opacity:0;transition:opacity .3s}
+#turn-overlay.show{opacity:1}
+.turn-overlay-content{background:var(--paper);border:2px solid var(--leaf);
+  border-radius:50px;padding:18px 36px;box-shadow:var(--shadow-lg);
+  display:flex;align-items:center;gap:14px;
+  transform:scale(.9);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+#turn-overlay.show .turn-overlay-content{transform:scale(1)}
+.to-icon{width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  box-shadow:var(--shadow)}
+.to-text{font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink)}
+.to-name{font-family:var(--display);font-style:italic;color:var(--leaf);font-size:20px}
+
+/* Cellules cliquables avec hover plus marqué */
+.cell.path:not(.transformed){transition:all .2s}
+.cell.reachable{box-shadow:0 0 20px rgba(45,95,63,.4);z-index:5}
+
+/* Boutons d'action avec ripple effect */
+.act-choice{position:relative;overflow:hidden}
+.act-choice:active{transform:scale(.98)}
+
+/* Cartes de rôle au survol — léger tilt */
+.role-card:hover{transform:translateY(-4px) rotate(-.5deg)}
+
+/* Légende avec animation au toggle */
+.board-legend{transform-origin:top right}
+.board-legend.collapsed{transform:scale(.95)}
+
+/* Plateau avec ombre intérieure subtile */
+.board-grid{box-shadow:var(--shadow-lg),inset 0 0 0 1px rgba(122,176,136,.1)}
+
+/* Confettis pour fin victorieuse */
+.confetti{position:fixed;width:8px;height:14px;pointer-events:none;z-index:9996;
+  animation:confettiFall 3s ease-out forwards}
+@keyframes confettiFall{
+  0%{opacity:1;transform:translateY(-100vh) rotate(0deg)}
+  100%{opacity:0;transform:translateY(100vh) rotate(720deg)}
+}
+
+/* ═════════════════════════════════════════
+   RESPONSIVE MOBILE
+   Chaque joueur sur son propre téléphone
+═════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Corps scrollable sur mobile */
+  html,body{overflow-y:auto;overflow-x:hidden;height:auto}
+
+  /* Accueil */
+  #s1{position:relative;min-height:100vh}
+  .s1-inner{padding:32px 20px}
+  .s1-title{font-size:clamp(44px,14vw,72px)}
+  .s1-tagline{font-size:15px}
+  .s1-authors{font-size:10px}
+  .s1-context{padding:16px 18px;margin-bottom:24px}
+  .s1-pbtns{gap:6px}
+  .pbtn{width:46px;height:46px;font-size:15px}
+  .s1-start{padding:15px 36px;font-size:17px}
+
+  /* Rôles */
+  #s2{position:relative;min-height:100vh;padding:24px 16px}
+  .s2-title{font-size:28px}
+  .roles-grid{grid-template-columns:1fr;gap:12px;margin-bottom:20px}
+  .role-progress{gap:5px}
+  .rp-slot{padding:6px 10px}
+  .rp-name{font-size:10px}
+  .s2-actions{flex-direction:column;align-items:stretch;gap:8px}
+  .btn-secondary-role,.btn-launch{width:100%;justify-content:center;padding:14px}
+
+  /* Jeu — layout vertical au lieu de 3 colonnes */
+  #s3{
+    flex-direction:column;
+    overflow-y:auto;
+    overflow-x:hidden;
+    height:auto;
+    min-height:100vh;
+    position:relative
+  }
+  .col-l,.col-c,.col-r{
+    width:100%;
+    flex-shrink:0;
+    border-right:none;
+    border-left:none;
+    overflow:visible
+  }
+  .col-l{border-bottom:1px solid var(--paper4);order:2}
+  .col-c{order:1}
+  .col-r{border-top:1px solid var(--paper4);order:3}
+
+  /* Plateau — plus petit sur mobile */
+  .board-wrap{
+    padding:12px;
+    min-height:340px;
+    height:auto
+  }
+  .board-grid{
+    width:min(92vw, 440px);
+    gap:2px;padding:5px;
+    border-radius:var(--r8)
+  }
+  .cell{padding:1px}
+  .cell-icon{font-size:14px}
+  .cell-label{font-size:5.5px}
+  .center-progress{font-size:28px}
+  .center-title{font-size:11px}
+  .center-progress-sub{font-size:8px}
+  .center-tree{font-size:13px}
+  .center-stat-row{gap:10px}
+  .center-stat-val{font-size:12px}
+
+  /* Situation */
+  .sit-bar{padding:10px 14px;min-height:auto}
+  .sit-text{font-size:12px}
+
+  /* KPIs */
+  .kpi-wrap{padding:12px 14px}
+  .kpi-lbl{font-size:11px}
+  .kpi-val{font-size:12px}
+
+  /* Mandat */
+  .mandat-wrap{padding:10px 14px}
+
+  /* Actions */
+  .action-panel{padding:12px 14px}
+  .act-choice{padding:12px}
+  .act-c-name{font-size:13px}
+  .act-c-desc{font-size:11px}
+  .dice-box{width:64px;height:64px;font-size:28px}
+  .btn-valider,.dice-btn{padding:14px;font-size:15px}
+
+  /* Joueurs */
+  .players-list{padding:10px 14px}
+  .player-row{padding:7px 8px}
+  .p-name{font-size:11px}
+
+  /* Journal */
+  .journal-wrap{max-height:200px;overflow-y:auto;padding:10px 14px}
+
+  /* Légende */
+  .board-legend{top:10px;right:10px}
+  .legend-toggle{padding:7px 10px;min-width:100px}
+  .legend-row{font-size:8px}
+  .legend-sq{width:9px;height:9px}
+
+  /* Headers */
+  .ghdr{padding:10px 14px;min-height:42px}
+  .ghdr-title{font-size:13px}
+  .ghdr-lbl{font-size:9px}
+  .tdot{width:18px;height:4px}
+
+  /* Cartes */
+  #s4{position:relative;min-height:100vh;padding:24px 16px}
+  .card-display{padding:28px 24px;max-width:100%}
+  .cd-title{font-size:24px}
+  .cd-desc{font-size:13px}
+  .cd-stat{font-size:12px}
+  .cd-iconbox{width:64px;height:64px;font-size:34px}
+  .cd-pill{font-size:10px;padding:6px 12px}
+  .cd-choice{padding:12px 14px;font-size:12px}
+  .cd-continue{padding:12px 28px;font-size:15px;width:100%}
+
+  /* Pioche */
+  #s-pioche{position:relative;min-height:100vh;padding:32px 16px}
+  .pioche-title{font-size:26px}
+  .pioche-sub{font-size:13px;margin-bottom:28px}
+  .pioche-deck{height:220px}
+  .deck-card{width:120px;height:175px}
+  .deck-card-back-symbol{font-size:48px}
+  .deck-card.spread-0{transform:translateX(-120px) rotate(-12deg)}
+  .deck-card.spread-2{transform:translateX(120px) rotate(12deg)}
+  .deck-card.choosable.spread-0:hover{transform:translateX(-120px) rotate(-12deg) scale(1.06) translateY(-10px)}
+  .deck-card.choosable.spread-2:hover{transform:translateX(120px) rotate(12deg) scale(1.06) translateY(-10px)}
+
+  /* Bilan */
+  #s5{position:relative;min-height:100vh;padding:32px 16px}
+  .bilan-title{font-size:clamp(32px,8vw,48px)}
+  .score-ring-wrap{width:140px;height:140px}
+  .srsvg{width:140px;height:140px}
+  .score-num{font-size:36px}
+  .bilan-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .bk-val{font-size:18px}
+  .debrief-box{padding:16px 18px}
+  .btn-replay{width:100%;justify-content:center;padding:14px}
+
+  /* Overlay turn */
+  .turn-overlay-content{padding:14px 24px}
+  .to-text{font-size:15px}
+  .to-name{font-size:17px}
+
+  /* Toast */
+  .toast{max-width:90vw;font-size:12px;padding:10px 16px;bottom:16px}
+
+  /* Écran pioche : instruction */
+  .pioche-instruction{font-size:10px;padding:6px 12px}
+}
+
+/* Très petits écrans (iPhone SE etc.) */
+@media (max-width: 380px) {
+  .s1-title{font-size:40px}
+  .board-grid{width:95vw;gap:1px;padding:4px}
+  .cell-icon{font-size:12px}
+  .cell-label{font-size:5px}
+  .deck-card{width:100px;height:150px}
+  .deck-card.spread-0{transform:translateX(-100px) rotate(-12deg)}
+  .deck-card.spread-2{transform:translateX(100px) rotate(12deg)}
+}
+
+</style>
+</head>
+<body>
+
+<!-- ════════════ S1 ACCUEIL ════════════ -->
+<div id="s1" class="screen active">
+  <div class="s1-inner">
+    <div class="s1-logo">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 7 6 12 6 14a6 6 0 0012 0c0-2-1-7-6-12z"/></svg>
+      UTC · Projet P26 · UR05
+    </div>
+    <h1 class="s1-title">Sauvez<br><em>le Quartier</em></h1>
+    <div class="s1-tagline">Un serious game sur la désimperméabilisation des sols urbains</div>
+    <div class="s1-authors">Un jeu de <strong>Ahmed Addi</strong> &amp; <strong>Fodié Sidibé</strong></div>
+    
+    <div class="s1-context">
+      <div class="s1-ctag">Mise en situation — Été 2026</div>
+      <div class="s1-ctext">Deux étés de canicule consécutifs. Une inondation a paralysé le centre-ville pendant 48 heures. Le conseil municipal vote en urgence un Plan d'Adaptation Climatique. Vous formez la cellule de crise inter-services. 6 tours, 350 000 €, 12 zones à transformer pour sauver Saint-Jean.</div>
+    </div>
+    
+    <div class="s1-config">
+      <div class="s1-cfg-label">Nombre de joueurs</div>
+      <div class="s1-pbtns">
+        <button class="pbtn" onclick="setNb(2,this)">2</button>
+        <button class="pbtn" onclick="setNb(3,this)">3</button>
+        <button class="pbtn sel" onclick="setNb(4,this)">4</button>
+        <button class="pbtn" onclick="setNb(5,this)">5</button>
+        <button class="pbtn" onclick="setNb(6,this)">6</button>
+      </div>
+    </div>
+    
+    <button class="s1-start" onclick="goRoles()">
+      Commencer la session
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ════════════ S2 RÔLES ════════════ -->
+<div id="s2" class="screen">
+  <div class="s2-head">
+    <div class="s2-num">Étape 01 — Choix des rôles</div>
+    <h2 class="s2-title">Choisissez vos rôles</h2>
+    <p class="s2-sub" id="s2-sub">Joueur 1, cliquez sur le rôle que vous souhaitez incarner.</p>
+  </div>
+  <div class="role-progress" id="role-progress"></div>
+  <div class="roles-grid" id="roles-grid"></div>
+  <div class="s2-actions">
+    <button class="btn-secondary-role" onclick="randomizeRoles()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V3l-4 4 4 4V8a6 6 0 11-6 6H4a8 8 0 108-9z"/></svg>
+      Distribution aléatoire
+    </button>
+    <button class="btn-secondary-role" onclick="resetRoleChoice()">
+      ↺ Recommencer
+    </button>
+    <button class="btn-launch" id="btn-launch-game" disabled onclick="startGame()">
+      Lancer la partie
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ════════════ S3 JEU ════════════ -->
+<div id="s3" class="screen">
+  <!-- COL LEFT -->
+  <div class="col-l">
+    <div class="ghdr">
+      <span class="ghdr-title">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 7 6 12 6 14a6 6 0 0012 0c0-2-1-7-6-12z"/></svg>
+        Saint-Jean
+      </span>
+      <span class="ghdr-lbl" id="lbl-tour">Tour 1 / 6</span>
+    </div>
+    
+    <div class="mandat-wrap">
+      <div class="mandat-row">
+        <span class="mandat-lbl">◆ Zones transformées</span>
+        <span class="mandat-val"><span id="zones-done">0</span>/12</span>
+      </div>
+      <div class="mandat-track">
+        <div class="mandat-fill" id="mandat-fill" style="width:0%"></div>
+        <div class="mandat-marker"></div>
+      </div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--ink3);margin-top:7px;letter-spacing:.05em">Minimum 6 zones pour réussir le mandat</div>
+    </div>
+    
+    <div class="kpi-wrap">
+      <div class="sec-title">Indicateurs du quartier</div>
+      <div class="kpi-item">
+        <div class="kpi-top"><span class="kpi-lbl"><span class="kpi-emoji">🌡</span>Température ICU</span><span class="kpi-val" id="kv0">+6.2°C</span></div>
+        <div class="kpi-track"><div class="kpi-bar" id="kb0" style="width:78%;background:linear-gradient(90deg,#4A8B5C,#E8B547,#C0594A)"></div></div>
+      </div>
+      <div class="kpi-item">
+        <div class="kpi-top"><span class="kpi-lbl"><span class="kpi-emoji">💧</span>Infiltration eau</span><span class="kpi-val" id="kv1">12%</span></div>
+        <div class="kpi-track"><div class="kpi-bar" id="kb1" style="width:12%;background:linear-gradient(90deg,var(--water2),var(--water))"></div></div>
+      </div>
+      <div class="kpi-item">
+        <div class="kpi-top"><span class="kpi-lbl"><span class="kpi-emoji">🌿</span>Biodiversité</span><span class="kpi-val" id="kv2">18 pts</span></div>
+        <div class="kpi-track"><div class="kpi-bar" id="kb2" style="width:23%;background:linear-gradient(90deg,var(--leaf3),var(--leaf))"></div></div>
+      </div>
+      <div class="kpi-item">
+        <div class="kpi-top"><span class="kpi-lbl"><span class="kpi-emoji">💶</span>Budget</span><span class="kpi-val" id="kv3">350k€</span></div>
+        <div class="kpi-track"><div class="kpi-bar" id="kb3" style="width:100%;background:linear-gradient(90deg,var(--earth2),var(--earth))"></div></div>
+      </div>
+      <div class="kpi-item" style="margin-bottom:0">
+        <div class="kpi-top"><span class="kpi-lbl"><span class="kpi-emoji">😊</span>Satisfaction</span><span class="kpi-val" id="kv4">50pts</span></div>
+        <div class="kpi-track"><div class="kpi-bar" id="kb4" style="width:50%;background:linear-gradient(90deg,var(--sun2),var(--sun))"></div></div>
+      </div>
+    </div>
+    
+    <div class="action-panel" id="action-panel"></div>
+  </div>
+
+  <!-- COL CENTER -->
+  <div class="col-c">
+    <div class="ghdr">
+      <div class="tour-dots" id="tdots"></div>
+      <span class="ghdr-lbl" id="lbl-phase">EN COURS</span>
+    </div>
+    <div class="board-wrap" id="board-wrap">
+      <div class="board-grid" id="board"></div>
+      <div class="board-legend collapsed" id="board-legend">
+        <button class="legend-toggle" onclick="toggleLegend()">
+          <span>◆ Légende</span>
+          <span class="legend-toggle-icon">▼</span>
+        </button>
+        <div class="legend-content">
+          <div class="legend-row"><div class="legend-sq" style="background:#B8AE94"></div>À transformer</div>
+          <div class="legend-row"><div class="legend-sq" style="background:#7AB088"></div>Déjà verte</div>
+          <div class="legend-row"><div class="legend-sq" style="background:#B8D4DC"></div>Info pédag.</div>
+          <div class="legend-row"><div class="legend-sq" style="background:#E8F2E5;border:1px solid #4A8B5C"></div>Chance</div>
+          <div class="legend-row"><div class="legend-sq" style="background:#F4D8D1;border:1px solid #C0594A"></div>Malchance</div>
+          <div class="legend-row"><div class="legend-sq" style="background:#E8DCC2"></div>Citoyens</div>
+          <div class="legend-row"><div class="legend-sq" style="background:#2A2620"></div>Mairie</div>
+        </div>
+      </div>
+    </div>
+    <div class="sit-bar">
+      <div class="sit-icon-circle" id="sit-icon-c"><span id="sit-icon">🎲</span></div>
+      <div class="sit-content">
+        <div class="sit-badge" id="sit-badge">Phase de jeu</div>
+        <div class="sit-text" id="sit-text">Lancez les dés pour commencer.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COL RIGHT -->
+  <div class="col-r">
+    <div class="ghdr"><span class="ghdr-lbl">◆ Cellule de crise</span></div>
+    <div class="players-list" id="players-list"></div>
+    <div class="journal-wrap">
+      <div class="sec-title" style="padding-bottom:8px">Journal de bord</div>
+      <div id="journal"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ S4 CARTES ════════════ -->
+<div id="s4" class="screen">
+  <div class="card-display" id="card-display">
+    <div class="cd-stripe"></div>
+    <div class="cd-iconbox" id="cd-iconbox">🎴</div>
+    <div class="cd-typebadge" id="cd-type">CARTE</div>
+    <div class="cd-title" id="cd-title">Titre</div>
+    <div class="cd-desc" id="cd-desc">Description</div>
+    <div class="cd-stat" id="cd-stat" style="display:none"></div>
+    <div class="cd-pills" id="cd-pills"></div>
+    <div class="cd-choices" id="cd-choices" style="display:none"></div>
+    <button class="cd-continue" id="cd-continue" onclick="closeCard()">Continuer →</button>
+  </div>
+</div>
+
+<!-- ════════════ S5 BILAN ════════════ -->
+<div id="s5" class="screen">
+  <div class="bilan-eyebrow">Bilan de mandat</div>
+  <h1 class="bilan-title">Saint-Jean<br><em>après 6 tours</em></h1>
+  <div class="score-ring-wrap">
+    <svg class="srsvg" viewBox="0 0 180 180">
+      <circle class="sr-track" cx="90" cy="90" r="76"/>
+      <circle class="sr-fill" id="sr-fill" cx="90" cy="90" r="76" stroke-dasharray="477" stroke-dashoffset="477"/>
+    </svg>
+    <div class="score-center"><div class="score-num" id="snum">0</div><div class="score-den">/100</div></div>
+  </div>
+  <div class="bilan-lv" id="bilan-lv">—</div>
+  <div class="bilan-msg" id="bilan-msg"></div>
+  <div class="bilan-grid" id="bilan-grid"></div>
+  <div class="debrief-box">
+    <div class="db-title">◆ Questions de débriefing</div>
+    <div class="db-q">Quelle décision a été la plus difficile à prendre en équipe ? Pourquoi ?</div>
+    <div class="db-q">Quelle case « Info » vous a le plus marqué ? Pourquoi ?</div>
+    <div class="db-q">Dans votre collectivité — quelle serait la première zone à désimperméabiliser ? Quel serait le premier frein réel ?</div>
+  </div>
+  <button class="btn-replay" onclick="reset()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V3l-4 4 4 4V8a6 6 0 11-6 6H4a8 8 0 108-9z"/></svg>
+    Rejouer une partie
+  </button>
+</div>
+
+<!-- Écran de pioche -->
+<div id="s-pioche">
+  <h2 class="pioche-title" id="pioche-title">Tirage d'une carte</h2>
+  <p class="pioche-sub" id="pioche-sub">Une carte vous attend...</p>
+  <div class="pioche-deck" id="pioche-deck">
+    <div class="deck-card" id="card-0" data-pos="0">
+      <span class="deck-card-back-symbol">◆</span>
+      <div class="deck-card-back-label">Carte</div>
+    </div>
+    <div class="deck-card" id="card-1" data-pos="1">
+      <span class="deck-card-back-symbol">◆</span>
+      <div class="deck-card-back-label">Carte</div>
+    </div>
+    <div class="deck-card" id="card-2" data-pos="2">
+      <span class="deck-card-back-symbol">◆</span>
+      <div class="deck-card-back-label">Carte</div>
+    </div>
+  </div>
+  <div class="pioche-instruction" id="pioche-instruction">Tirage automatique en cours...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Effets visuels -->
+<canvas id="fx-canvas"></canvas>
+<div id="card-flash"></div>
+<div id="turn-overlay">
+  <div class="turn-overlay-content">
+    <div class="to-icon" id="to-icon">🏛️</div>
+    <div>
+      <div class="to-text">Au tour de</div>
+      <div class="to-name" id="to-name">—</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// DONNÉES — RÔLES
+// ════════════════════════════════════════════════
+const ROLES=[
+  {id:'maire',icon:'🏛️',color:'#2A2620',iconBg:'#F4EFE3',iconColor:'#2A2620',name:'Le Maire',tag:'Décideur politique',tagBg:'#F4EFE3',tagColor:'#4F4538',
+   desc:'Arbitre politique. Vote en dernier en cas de désaccord. Porte la vision globale.',
+   obj:'Maintenir satisfaction > 40 ET zones transformées ≥ 10.',
+   pow:'DÉCRET D\'URGENCE',powDesc:'Permet de relancer le dé une fois par partie.'},
+  {id:'financier',icon:'💰',color:'#A57F4F',iconBg:'#F5EBD8',iconColor:'#5C4530',name:'Dir. Financier',tag:'Gestion budgétaire',tagBg:'#F5EBD8',tagColor:'#5C4530',
+   desc:'Gardien du budget municipal. Identifie les sources de financement disponibles.',
+   obj:'Terminer avec > 50k€ de réserve budgétaire.',
+   pow:'SUBVENTION EXPRESS',powDesc:'+80k€ d\'aide exceptionnelle, une fois par partie.'},
+  {id:'technique',icon:'🔧',color:'#3E7B92',iconBg:'#B8D4DC',iconColor:'#3E7B92',name:'Dir. Technique',tag:'Expert terrain',tagBg:'#B8D4DC',tagColor:'#3E7B92',
+   desc:'Connaît les contraintes géotechniques, les réseaux enterrés et les risques.',
+   obj:'Transformer au moins 3 zones en collaboration avec l\'équipe.',
+   pow:'EXPERTISE TECHNIQUE',powDesc:'Révèle gratuitement la prochaine carte tirée.'},
+  {id:'habitant',icon:'🏘️',color:'#C0594A',iconBg:'#F4D8D1',iconColor:'#C0594A',name:'Repr. Habitants',tag:'Voix citoyenne',tagBg:'#F4D8D1',tagColor:'#C0594A',
+   desc:'Voix des riverains, parents d\'élèves et commerçants.',
+   obj:'Obtenir +20 pts de satisfaction en fin de partie.',
+   pow:'MOBILISATION',powDesc:'+15 pts satisfaction, une fois par partie.'},
+  {id:'espaces_verts',icon:'🌳',color:'#2D5F3F',iconBg:'#C8DEC9',iconColor:'#2D5F3F',name:'Dir. Espaces Verts',tag:'Expert nature en ville',tagBg:'#C8DEC9',tagColor:'#2D5F3F',
+   desc:'Spécialiste de la végétalisation urbaine et de la biodiversité.',
+   obj:'Atteindre > 55 pts de biodiversité en fin de partie.',
+   pow:'EXPERTISE VÉGÉTALE',powDesc:'+10 pts de biodiversité bonus, une fois par partie.'},
+  {id:'opposition',icon:'⚖️',color:'#5C4530',iconBg:'#E8DCC2',iconColor:'#5C4530',name:'Élu Opposition',tag:'Contre-pouvoir',tagBg:'#E8DCC2',tagColor:'#5C4530',
+   desc:'Représente les électeurs sceptiques. Vigilance critique.',
+   obj:'Utiliser son veto au moins une fois.',
+   pow:'VETO POLITIQUE',powDesc:'Bloque une action proposée. -20k€ de procédure.'}
+];
+
+// ════════════════════════════════════════════════
+// CIRCUIT — 24 CASES PÉRIPHÉRIQUES (sens horaire)
+// Format : (row, col) sur grille 7×7
+// Le centre (rangs 1-5 lignes 1-5) est libre pour afficher le quartier qui évolue
+// ════════════════════════════════════════════════
+const CIRCUIT_POSITIONS=[
+  // Ligne du haut (gauche → droite) : 7 cases
+  {r:0,c:0},{r:0,c:1},{r:0,c:2},{r:0,c:3},{r:0,c:4},{r:0,c:5},{r:0,c:6},
+  // Colonne droite (haut → bas, sans le coin déjà compté) : 5 cases
+  {r:1,c:6},{r:2,c:6},{r:3,c:6},{r:4,c:6},{r:5,c:6},
+  // Ligne du bas (droite → gauche, sans coin) : 6 cases
+  {r:6,c:6},{r:6,c:5},{r:6,c:4},{r:6,c:3},{r:6,c:2},{r:6,c:1},
+  // Colonne gauche (bas → haut, sans coins) : 6 cases
+  {r:6,c:0},{r:5,c:0},{r:4,c:0},{r:3,c:0},{r:2,c:0},{r:1,c:0}
+];
+// Total : 24 cases
+
+// Distribution des types sur les 24 cases du circuit
+// Mairie en case 0 (point de départ)
+// Répartition équilibrée
+const CIRCUIT_TYPES=[
+  // 24 cases
+  'X',  // 0  - Mairie (départ)
+  'P',  // 1  - Parking
+  'I',  // 2  - Info
+  'H',  // 3  - Chance
+  'R',  // 4  - Rue
+  'C',  // 5  - Cour
+  'M',  // 6  - Malchance
+  'P',  // 7  - Parking
+  'I',  // 8  - Info
+  'F',  // 9  - Friche
+  'Y',  // 10 - Mairie annexe
+  'R',  // 11 - Rue
+  'H',  // 12 - Chance
+  'C',  // 13 - Cour
+  'P',  // 14 - Parking
+  'Z',  // 15 - Citoyens
+  'F',  // 16 - Friche
+  'M',  // 17 - Malchance
+  'R',  // 18 - Rue
+  'I',  // 19 - Info
+  'P',  // 20 - Parking
+  'H',  // 21 - Chance
+  'C',  // 22 - Cour
+  'M'   // 23 - Malchance
+];
+
+const CELL_TYPES={
+  P:{type:'imp',sub:'parking',icon:'🅿️',label:'Parking',cost:68000,icu:-.4,eau:35,bio:6,sat:5},
+  C:{type:'imp',sub:'cour',icon:'🏫',label:'Cour école',cost:140000,icu:-1.5,eau:15,bio:25,sat:18},
+  R:{type:'imp',sub:'rue',icon:'🛣️',label:'Rue',cost:85000,icu:-.7,eau:30,bio:12,sat:10},
+  F:{type:'imp',sub:'friche',icon:'🏚️',label:'Friche',cost:55000,icu:-.5,eau:25,bio:18,sat:8},
+  I:{type:'info',icon:'💡',label:'Info'},
+  H:{type:'chance',icon:'🍀',label:'Chance'},
+  M:{type:'malchance',icon:'⚠️',label:'Malchance'},
+  Z:{type:'citoyens',icon:'👥',label:'Citoyens'},
+  X:{type:'mairie',icon:'🏛️',label:'Mairie',isStart:true},
+  Y:{type:'mairie-sec',icon:'🏢',label:'Annexe'}
+};
+
+// ════════════════════════════════════════════════
+// CARTES
+// ════════════════════════════════════════════════
+const CARDS_CHANCE=[
+  {icon:'💰',title:'Subvention de l\'Agence de l\'eau',desc:'L\'Agence salue votre démarche cohérente. Une aide exceptionnelle est versée à la collectivité.',pills:[{t:'Budget +60k€',c:'pos'}],fn:s=>{s.bud+=60000}},
+  {icon:'🌳',title:'Pépinière régionale solidaire',desc:'La pépinière de la région offre 30 arbres pour les espaces publics du quartier.',pills:[{t:'Biodiversité +12pts',c:'pos'},{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.bio+=12;s.sat=Math.min(100,s.sat+5)}},
+  {icon:'📰',title:'Article de presse positif',desc:'Le journal régional titre : "Saint-Jean, pionnière de la désimperméabilisation".',pills:[{t:'Satisfaction +15',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+15)}},
+  {icon:'🎓',title:'Stagiaires de l\'université',desc:'Une équipe d\'étudiants en urbanisme propose une expertise gratuite pour votre prochaine action.',pills:[{t:'Prochaine action -20k€',c:'pos'}],fn:s=>{s.discount=true}},
+  {icon:'🤝',title:'Convention avec l\'État',desc:'Le Fonds Vert valide une convention de financement avec votre collectivité.',pills:[{t:'Budget +50k€',c:'pos'}],fn:s=>{s.bud+=50000}},
+  {icon:'🌧️',title:'Pluie bienvenue',desc:'Une pluie modérée et continue vient recharger les jardins de pluie déjà installés.',pills:[{t:'Infiltration +8%',c:'pos'},{t:'ICU -0.3°C',c:'pos'}],fn:s=>{s.eau=Math.min(100,s.eau+8);s.icu=Math.max(0,s.icu-.3)}},
+  {icon:'🐝',title:'Apiculteurs urbains',desc:'Une association d\'apiculteurs installe des ruches pédagogiques dans les espaces verts.',pills:[{t:'Biodiversité +15pts',c:'pos'}],fn:s=>{s.bio+=15}},
+  {icon:'🏆',title:'Trophée régional',desc:'Saint-Jean reçoit le prix régional de la ville résiliente. Reconnaissance et financement.',pills:[{t:'Budget +40k€',c:'pos'},{t:'Satisfaction +10',c:'pos'}],fn:s=>{s.bud+=40000;s.sat=Math.min(100,s.sat+10)}}
+];
+
+const CARDS_MALCHANCE=[
+  {icon:'⚠️',title:'DT-DICT bloquante',desc:'Des réseaux enterrés mal cartographiés sont découverts. Retard imposé sur le chantier en cours.',pills:[{t:'Budget -30k€',c:'neg'}],fn:s=>{s.bud=Math.max(0,s.bud-30000)}},
+  {icon:'☣️',title:'Pollution révélée',desc:'Une analyse de sol révèle une contamination ancienne. Surcoût inévitable pour les futurs chantiers cours.',pills:[{t:'Budget -50k€',c:'neg'}],fn:s=>{s.bud=Math.max(0,s.bud-50000);s.surcut=true}},
+  {icon:'🔥',title:'Vague de chaleur',desc:'Météo-France annonce une canicule exceptionnelle. L\'ICU devient critique.',pills:[{t:'ICU +1.5°C',c:'neg'},{t:'Satisfaction -10',c:'neg'}],fn:s=>{s.icu=Math.min(10,s.icu+1.5);s.sat=Math.max(0,s.sat-10)}},
+  {icon:'🌊',title:'Inondation par ruissellement',desc:'Un orage saturé les réseaux. La rue des Lilas est sous 20cm d\'eau pendant 2 heures.',pills:[{t:'Infiltration -15%',c:'neg'},{t:'Budget -40k€',c:'neg'}],fn:s=>{s.eau=Math.max(0,s.eau-15);s.bud=Math.max(0,s.bud-40000)}},
+  {icon:'😠',title:'Collectif d\'opposition',desc:'Un collectif de riverains s\'oppose publiquement aux travaux. 2 000 signatures.',pills:[{t:'Satisfaction -20',c:'neg'}],fn:s=>{s.sat=Math.max(0,s.sat-20)}},
+  {icon:'🏗️',title:'Faillite d\'une entreprise',desc:'L\'entreprise titulaire d\'un marché dépose le bilan. Avenant nécessaire.',pills:[{t:'Budget -60k€',c:'neg'}],fn:s=>{s.bud=Math.max(0,s.bud-60000)}},
+  {icon:'🗳️',title:'Élections municipales',desc:'La pression politique monte. Désormais, la satisfaction pèse double au score final.',pills:[{t:'Satisfaction x2 au score',c:'neg'}],fn:s=>{s.elections=true}},
+  {icon:'⛏️',title:'Fissure géotechnique',desc:'Une étude révèle un mouvement de sol imprévu. Coût de mise en sécurité élevé.',pills:[{t:'Budget -45k€',c:'neg'}],fn:s=>{s.bud=Math.max(0,s.bud-45000)}}
+];
+
+const CARDS_INFO=[
+  {icon:'🌡️',title:'L\'écart thermique urbain',desc:'En période de canicule, l\'écart de température entre les zones urbaines denses et les zones rurales peut atteindre :',stat:'+8°C — c\'est l\'effet "îlot de chaleur urbain" (LIED, Météo-France 2022).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'🇫🇷',title:'L\'artificialisation des sols',desc:'Chaque année en France, on artificialise une surface équivalente à...',stat:'23 907 hectares — soit la ville de Marseille tous les 7 ans (CEREMA 2024).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'🏫',title:'Les cours Oasis à Paris',desc:'Le programme Cours Oasis transforme les cours d\'école parisiennes depuis 2019. Les mesures montrent :',stat:'1 à 3°C de réduction de l\'ICU local (Météo-France & LIED Paris, 2022).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'💧',title:'Coût d\'une cour désimperméabilisée',desc:'Désimperméabiliser une cour d\'école dans le cadre du programme OASIS coûte en moyenne :',stat:'300 à 600 €/m² (programme OASIS Paris, 2020-2024).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'🌧️',title:'L\'eau pluviale en ville',desc:'En ville imperméabilisée, sur 100 mm de pluie tombés, combien d\'eau s\'infiltre dans le sol ?',stat:'Seulement 10 à 15% — contre 50% en milieu naturel (CEREMA, 2022).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'🌳',title:'Le pouvoir refroidissant des arbres',desc:'Un arbre adulte en ville produit un effet refroidissant équivalent à :',stat:'5 climatiseurs domestiques tournant 20 heures par jour (ONF & ADEME, 2023).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'📜',title:'La loi ZAN',desc:'La loi Climat et Résilience de 2021 fixe un objectif national de Zéro Artificialisation Nette :',stat:'Horizon 2050 : 0 ha net artificialisé. Étape 2031 : -50% du rythme.',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'🐝',title:'Le temps de régénération du sol',desc:'Un sol imperméabilisé perd ses fonctions écologiques pendant :',stat:'Plus de 100 ans — temps de reconstitution complète (INRAE, 2023).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'💸',title:'Le coût de l\'inaction',desc:'Une inondation urbaine moyenne en France coûte aux collectivités :',stat:'250 000 à 2 millions d\'euros par événement (CCR, 2023).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'🏘️',title:'L\'acceptabilité sociale',desc:'Selon une étude DREAL 2023, le taux d\'acceptation post-travaux est :',stat:'Supérieur à 80% — mais l\'opposition pré-chantier peut atteindre 40%.',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'⚖️',title:'Le coefficient de biotope',desc:'Le Coefficient de Biotope par Surface (CBS) impose dans les PLU une part minimale végétalisée :',stat:'Berlin l\'a instauré dès 1994 — de plus en plus de PLU français l\'intègrent (Cerema 2024).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}},
+  {icon:'🌍',title:'Espèces locales vs invasives',desc:'En climat chaud, certaines espèces végétales urbaines deviennent envahissantes :',stat:'Robinier et ailante à proscrire en faveur d\'essences locales (Plante & Cité, 2024).',pills:[{t:'Satisfaction +5',c:'pos'}],fn:s=>{s.sat=Math.min(100,s.sat+5)}}
+];
+
+const CARDS_CITOYENS=[
+  {icon:'👥',title:'Réunion publique',desc:'Une concertation citoyenne se tient à la mairie. Les habitants vous demandent de choisir une priorité.',
+   choices:[
+     {label:'Privilégier la fraîcheur',desc:'Les habitants veulent de l\'ombre rapidement.',fn:s=>{s.icu=Math.max(0,s.icu-.8);s.sat=Math.min(100,s.sat+8)}},
+     {label:'Privilégier la biodiversité',desc:'Les habitants veulent retrouver la nature.',fn:s=>{s.bio+=15;s.sat=Math.min(100,s.sat+5)}}
+   ]},
+  {icon:'🎒',title:'Pétition des parents d\'élèves',desc:'Les parents demandent une action prioritaire sur la cour Pasteur.',
+   choices:[
+     {label:'Accélérer la cour',desc:'Avancer le chantier — coût supplémentaire 30k€.',fn:s=>{s.bud=Math.max(0,s.bud-30000);s.sat=Math.min(100,s.sat+15)}},
+     {label:'Tenir le calendrier',desc:'Garder le rythme prévu — déception des parents.',fn:s=>{s.sat=Math.max(0,s.sat-10)}}
+   ]}
+];
+
+// ════════════════════════════════════════════════
+// ÉTAT
+// ════════════════════════════════════════════════
+let G={},nb=4,players=[],currentPlayerIdx=0,diceVal=0,
+    phase='idle',pendingCard=null,boardState=[];
+
+const PLAYER_COLORS=['#C0594A','#3E7B92','#2D5F3F','#A57F4F','#5C4530','#E8B547'];
+
+function initG(){
+  G={tour:1,icu:6.2,eau:12,bio:18,bud:350000,sat:50,
+     zonesDone:0,zonesTotal:0,
+     pows:{maire:false,financier:false,technique:false,habitant:false,espaces_verts:false,opposition:false},
+     journal:[],discount:false,surcut:false,elections:false};
+  phase='idle';
+  // Init plateau — 24 cases sur le circuit
+  boardState=CIRCUIT_TYPES.map((letter,i)=>{
+    const def=CELL_TYPES[letter];
+    const pos=CIRCUIT_POSITIONS[i];
+    if(def.type==='imp')G.zonesTotal++;
+    return {
+      idx:i,r:pos.r,c:pos.c,
+      type:def.type,sub:def.sub||null,icon:def.icon,label:def.label,
+      cost:def.cost,icu:def.icu,eau:def.eau,bio:def.bio,sat:def.sat,
+      transformed:false,studied:false
+    };
+  });
+  // Init joueurs (tous démarrent sur case 0 = Mairie)
+  players=[];
+  for(let i=0;i<Math.min(nb,6);i++){
+    // Utiliser le rôle choisi par le joueur, ou l'ordre par défaut en secours
+    const roleIdx=(chosenRoles&&chosenRoles[i]!=null)?chosenRoles[i]:i;
+    const role=ROLES[roleIdx];
+    players.push({
+      id:role.id,role,circuitPos:0,color:PLAYER_COLORS[i],
+      powerUsed:false,actionsCount:0,studiesCount:0
+    });
+  }
+  currentPlayerIdx=0;diceVal=0;
+}
+
+// ════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  // Cacher aussi l'écran de pioche qui n'a pas la classe .screen
+  const pioche=document.getElementById('s-pioche');
+  if(pioche&&id!=='s-pioche')pioche.classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+function setNb(n,btn){nb=n;document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel')}
+function goRoles(){buildRoles();show('s2')}
+function startGame(){
+  // Sécurité : tous les rôles doivent être choisis
+  if(chosenRoles.some(r=>r===null)){
+    showToast('Tous les joueurs doivent choisir un rôle avant de lancer.','r');
+    return;
+  }
+  initG();renderAll();show('s3');
+  addJ('La cellule de crise est constituée.','good');
+  // Premier joueur : overlay de transition
+  showTurnTransition(players[currentPlayerIdx],()=>setPhase('roll'));
+}
+function reset(){initG();show('s1')}
+
+// ════════════════════════════════════════════════
+// S2 — CHOIX DES RÔLES
+// ════════════════════════════════════════════════
+let chosenRoles=[]; // chosenRoles[playerSlot] = roleIndex
+
+function buildRoles(){
+  chosenRoles=new Array(Math.min(nb,6)).fill(null);
+  renderRolesScreen();
+}
+
+function currentChoosingSlot(){
+  // Retourne l'index du premier slot non rempli, ou -1 si tous remplis
+  return chosenRoles.findIndex(r=>r===null);
+}
+
+function renderRolesScreen(){
+  // Mettre à jour la barre de progression
+  const prog=document.getElementById('role-progress');
+  prog.innerHTML='';
+  const activeSlot=currentChoosingSlot();
+  for(let i=0;i<Math.min(nb,6);i++){
+    const slot=document.createElement('div');
+    const roleIdx=chosenRoles[i];
+    const filled=roleIdx!==null;
+    const isActive=i===activeSlot;
+    slot.className='rp-slot'+(filled?' filled':'')+(isActive?' active':'');
+    if(filled){
+      const r=ROLES[roleIdx];
+      slot.innerHTML=`<span class="rp-num">J${i+1}</span><span class="rp-icon">${r.icon}</span><span class="rp-name">${r.name}</span>`;
+    } else {
+      slot.innerHTML=`<span class="rp-num">J${i+1}</span><span class="rp-empty">${isActive?'à vous de choisir...':'en attente'}</span>`;
+    }
+    prog.appendChild(slot);
+  }
+
+  // Mettre à jour le sous-titre
+  const sub=document.getElementById('s2-sub');
+  if(activeSlot===-1){
+    sub.innerHTML='Tous les rôles sont attribués ! Mémorisez votre objectif secret, puis lancez la partie.';
+  } else {
+    sub.innerHTML=`<strong>Joueur ${activeSlot+1}</strong>, cliquez sur le rôle que vous souhaitez incarner.`;
+  }
+
+  // Activer/désactiver le bouton lancer
+  document.getElementById('btn-launch-game').disabled=(activeSlot!==-1);
+
+  // Construire les cartes
+  const g=document.getElementById('roles-grid');g.innerHTML='';
+  ROLES.forEach((r,i)=>{
+    const takenBySlot=chosenRoles.indexOf(i);
+    const isTaken=takenBySlot!==-1;
+    const d=document.createElement('div');
+    d.className='role-card'+(isTaken?' taken':(activeSlot!==-1?' selectable':''));
+    d.innerHTML=`
+      <div class="rc-stripe" style="background:${r.color}"></div>
+      <div class="rc-head">
+        <div class="rc-icon-row">
+          <div class="rc-icon-circle" style="background:${r.iconBg}">${r.icon}</div>
+          <div class="rc-title-block">
+            <div class="rc-name">${r.name}</div>
+            <span class="rc-tag" style="background:${r.tagBg};color:${r.tagColor}">${r.tag}</span>
+          </div>
+        </div>
+      </div>
+      <div class="rc-body">
+        <div class="rc-desc">${r.desc}</div>
+        <div class="rc-section">
+          <div class="rc-section-title" style="color:${r.color}">Objectif secret</div>
+          <div class="rc-obj-text" style="border-left-color:${r.color};color:${r.tagColor}">${r.obj}</div>
+        </div>
+        <div class="rc-section" style="margin-bottom:0">
+          <div class="rc-section-title" style="color:${r.color}">Pouvoir spécial</div>
+          <div class="rc-pow-box">
+            <div class="rc-pow-name" style="color:${r.color}">⚡ ${r.pow}</div>
+            <div class="rc-pow-desc">${r.powDesc}</div>
+          </div>
+        </div>
+      </div>
+      ${isTaken?`<div class="taken-by">Joueur ${takenBySlot+1}</div>`:''}`;
+    if(!isTaken&&activeSlot!==-1){
+      d.onclick=()=>pickRole(i);
+    }
+    g.appendChild(d);
+  });
+}
+
+function pickRole(roleIdx){
+  const slot=currentChoosingSlot();
+  if(slot===-1)return;
+  chosenRoles[slot]=roleIdx;
+  // Petit effet visuel
+  showToast(`Joueur ${slot+1} incarne ${ROLES[roleIdx].name} ${ROLES[roleIdx].icon}`,'g');
+  renderRolesScreen();
+}
+
+function randomizeRoles(){
+  // Remplit aléatoirement les slots restants avec des rôles non pris
+  const taken=chosenRoles.filter(r=>r!==null);
+  const available=[];
+  for(let i=0;i<6;i++){if(!taken.includes(i))available.push(i);}
+  // Mélanger
+  for(let i=available.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [available[i],available[j]]=[available[j],available[i]];
+  }
+  let ai=0;
+  for(let s=0;s<chosenRoles.length;s++){
+    if(chosenRoles[s]===null){chosenRoles[s]=available[ai++];}
+  }
+  showToast('🎲 Rôles distribués aléatoirement','g');
+  renderRolesScreen();
+}
+
+function resetRoleChoice(){
+  chosenRoles=new Array(Math.min(nb,6)).fill(null);
+  renderRolesScreen();
+}
+
+// ════════════════════════════════════════════════
+// RENDU
+// ════════════════════════════════════════════════
+function renderAll(){
+  buildBoard();updateKPIs();buildTourDots();buildPlayersList();updateMandat();
+  document.getElementById('lbl-tour').textContent=`Tour ${G.tour} / 6`;
+}
+
+function updateKPIs(){
+  const data=[
+    {id:0,val:'+'+G.icu.toFixed(1)+'°C',pct:Math.min(100,(G.icu/10)*100),warn:G.icu>=7},
+    {id:1,val:Math.round(G.eau)+'%',pct:Math.min(100,G.eau),warn:G.eau<10},
+    {id:2,val:Math.round(G.bio)+' pts',pct:Math.min(100,(G.bio/80)*100),warn:G.bio<12},
+    {id:3,val:Math.round(G.bud/1000)+'k€',pct:(G.bud/350000)*100,warn:G.bud<80000},
+    {id:4,val:Math.round(G.sat)+' pts',pct:G.sat,warn:G.sat<25}
+  ];
+  data.forEach(d=>{
+    const kv=document.getElementById('kv'+d.id);const kb=document.getElementById('kb'+d.id);
+    if(!kv||!kb)return;
+    kv.textContent=d.val;
+    if(d.warn)kv.classList.add('kpi-warn');else kv.classList.remove('kpi-warn');
+    kb.style.width=Math.max(1,d.pct)+'%';
+  });
+}
+
+function updateMandat(){
+  document.getElementById('zones-done').textContent=G.zonesDone;
+  document.getElementById('mandat-fill').style.width=(G.zonesDone/12)*100+'%';
+}
+
+function buildTourDots(){
+  const c=document.getElementById('tdots');c.innerHTML='';
+  for(let i=1;i<=6;i++){
+    const d=document.createElement('div');
+    d.className='tdot'+(i<G.tour?' done':i===G.tour?' active':'');
+    c.appendChild(d);
+  }
+}
+
+function buildPlayersList(){
+  const c=document.getElementById('players-list');c.innerHTML='';
+  c.insertAdjacentHTML('beforeend','<div class="sec-title" style="margin-bottom:10px">Joueurs ('+players.length+')</div>');
+  players.forEach((p,i)=>{
+    const isCurrent=i===currentPlayerIdx;
+    const div=document.createElement('div');
+    div.className='player-row'+(isCurrent?' is-current':'');
+    div.innerHTML=`
+      <div class="p-color-dot" style="background:${p.color}"></div>
+      <span class="p-icon">${p.role.icon}</span>
+      <div class="p-info">
+        <div class="p-name">${p.role.name}</div>
+        <div class="p-pow">${p.role.pow}</div>
+      </div>
+      <button class="pow-btn${p.powerUsed?' used':''}" ${p.powerUsed?'disabled':''} onclick="usePow(${i},this)">${p.powerUsed?'✓':'Jouer'}</button>`;
+    c.appendChild(div);
+  });
+}
+
+// ════════════════════════════════════════════════
+// PLATEAU — CIRCUIT FERMÉ + CENTRE QUARTIER
+// ════════════════════════════════════════════════
+function buildBoard(){
+  const b=document.getElementById('board');b.innerHTML='';
+  // Créer 49 cellules, mais seules les 24 du circuit sont actives
+  // Le centre est un grand bloc unique
+  // On va d'abord créer les 49 div vides, puis surcharger
+  
+  // Map des positions circuit → index
+  const posToIdx={};
+  CIRCUIT_POSITIONS.forEach((p,i)=>{posToIdx[`${p.r}_${p.c}`]=i;});
+  
+  for(let r=0;r<7;r++){
+    for(let c=0;c<7;c++){
+      const isCircuit=posToIdx[`${r}_${c}`]!==undefined;
+      if(isCircuit){
+        const cellIdx=posToIdx[`${r}_${c}`];
+        const cell=boardState[cellIdx];
+        const div=document.createElement('div');
+        div.className='cell path';
+        div.dataset.idx=cellIdx;
+        div.dataset.r=r;div.dataset.c=c;
+        if(cell.transformed){
+          div.classList.add('transformed');
+          div.style.background='linear-gradient(135deg,#7AB088 0%,#4A8B5C 100%)';
+        } else {
+          if(cell.type==='imp')div.classList.add('cell-imp');
+          else if(cell.type==='veg-existing')div.classList.add('cell-veg-existing');
+          else if(cell.type==='arbre')div.classList.add('cell-arbre');
+          else if(cell.type==='mairie')div.classList.add('cell-mairie');
+          else if(cell.type==='mairie-sec')div.classList.add('cell-mairie-sec');
+          else if(cell.type==='info')div.classList.add('cell-info');
+          else if(cell.type==='citoyens')div.classList.add('cell-citoyens');
+          else if(cell.type==='chance')div.classList.add('cell-chance');
+          else if(cell.type==='malchance')div.classList.add('cell-malchance');
+        }
+        div.innerHTML=`<span class="cell-icon">${cell.icon}</span><span class="cell-label">${cell.label}</span>`;
+        div.onclick=()=>onCircuitClick(cellIdx);
+        b.appendChild(div);
+      } else if(r===1&&c===1){
+        // Bloc centre (5×5 cellules)
+        const div=document.createElement('div');
+        div.className='center-block';
+        div.id='center-block';
+        b.appendChild(div);
+        renderCenter();
+      } else {
+        // Cellules cachées sous le centre — on ne les rend pas (le grid-area du center-block les recouvre)
+        const div=document.createElement('div');
+        div.style.display='none';
+        b.appendChild(div);
+      }
+    }
+  }
+  renderPawns();
+}
+
+function renderCenter(){
+  const block=document.getElementById('center-block');
+  if(!block)return;
+  // Affichage des arbres : 12 emplacements, illuminés selon les zones transformées
+  let treesHtml='';
+  for(let i=0;i<12;i++){
+    treesHtml+=`<span class="center-tree${i<G.zonesDone?' grown':''}">🌳</span>`;
+  }
+  block.innerHTML=`
+    <div class="center-quartier">
+      <div style="text-align:center">
+        <div class="center-title">Quartier Saint-Jean</div>
+        <div class="center-progress">${G.zonesDone}/12</div>
+        <div class="center-progress-sub">Zones transformées</div>
+        <div class="center-trees">${treesHtml}</div>
+        <div class="center-stat-row">
+          <div class="center-stat"><span class="center-stat-val" style="color:var(--warn)">${G.icu.toFixed(1)}°C</span>ICU</div>
+          <div class="center-stat"><span class="center-stat-val" style="color:var(--water)">${Math.round(G.eau)}%</span>Eau</div>
+          <div class="center-stat"><span class="center-stat-val" style="color:var(--leaf)">${Math.round(G.bio)}</span>Biodiv.</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPawns(){
+  // Retirer pions existants
+  document.querySelectorAll('.pawn').forEach(p=>p.remove());
+  // Grouper par position
+  const positions={};
+  players.forEach((p,i)=>{
+    if(!positions[p.circuitPos])positions[p.circuitPos]=[];
+    positions[p.circuitPos].push({p,i});
+  });
+  Object.keys(positions).forEach(idx=>{
+    const pawns=positions[idx];
+    const cell=document.querySelector(`.cell[data-idx="${idx}"]`);
+    if(!cell)return;
+    pawns.forEach((entry,j)=>{
+      const pawn=document.createElement('div');
+      pawn.className='pawn'+(entry.i===currentPlayerIdx?' current':'');
+      pawn.style.background=entry.p.color;
+      const offX=pawns.length>1?(j%2)*9-4:0;
+      const offY=pawns.length>1?Math.floor(j/2)*9-4:0;
+      pawn.style.bottom=(3+offY)+'px';
+      pawn.style.right=(3+offX)+'px';
+      cell.appendChild(pawn);
+    });
+  });
+  // Highlight current
+  document.querySelectorAll('.cell.current-pos').forEach(c=>c.classList.remove('current-pos'));
+  const cur=players[currentPlayerIdx];
+  const cell=document.querySelector(`.cell[data-idx="${cur.circuitPos}"]`);
+  if(cell)cell.classList.add('current-pos');
+}
+
+// ════════════════════════════════════════════════
+// PHASES DE JEU
+// ════════════════════════════════════════════════
+function setPhase(p){
+  phase=p;
+  const cur=players[currentPlayerIdx];
+  const sit=document.getElementById('sit-text');
+  const sitBadge=document.getElementById('sit-badge');
+  const sitIcon=document.getElementById('sit-icon');
+  if(p==='roll'){
+    sitIcon.textContent='🎲';
+    sitBadge.textContent=`Tour ${G.tour} — ${cur.role.name}`;
+    sit.textContent='Lancez le dé pour avancer sur le circuit.';
+    renderPanel_Roll();
+  } else if(p==='move'){
+    sitIcon.textContent='🚶';
+    sitBadge.textContent=`${cur.role.name} — Déplacement`;
+    sit.textContent=`Vous avancez de ${diceVal} cases en suivant le sens du circuit.`;
+    showTarget();
+    renderPanel_Move();
+  } else if(p==='action'){
+    sitIcon.textContent='🎯';
+    const cell=boardState[cur.circuitPos];
+    sitBadge.textContent=`${cur.role.name} — ${cell.label}`;
+    sit.textContent=getCellPrompt(cell);
+    clearTarget();
+    renderPanel_Action();
+  }
+}
+
+function getCellPrompt(cell){
+  if(cell.type==='imp')return`Vous êtes sur une zone à transformer. Que faites-vous ?`;
+  if(cell.type==='info')return`Une fiche d'information pédagogique vous attend.`;
+  if(cell.type==='chance')return`Tirez une carte CHANCE !`;
+  if(cell.type==='malchance')return`Tirez une carte MALCHANCE...`;
+  if(cell.type==='citoyens')return`Une concertation citoyenne se présente.`;
+  if(cell.type==='mairie'||cell.type==='mairie-sec')return`À la mairie : récupérez +30k€ de subvention.`;
+  return`Aucune action possible ici.`;
+}
+
+// ════════════════════════════════════════════════
+// PANNEAU D'ACTION
+// ════════════════════════════════════════════════
+function renderCurrentPlayer(){
+  const cur=players[currentPlayerIdx];
+  return `
+    <div class="curr-player" style="border-left:3px solid ${cur.color}">
+      <div class="cp-label">Joueur actif</div>
+      <div class="cp-row">
+        <div class="cp-icon-circle" style="background:${cur.role.iconBg}">${cur.role.icon}</div>
+        <span class="cp-name">${cur.role.name}</span>
+      </div>
+    </div>`;
+}
+
+function renderPanel_Roll(){
+  document.getElementById('action-panel').innerHTML=`
+    ${renderCurrentPlayer()}
+    <div class="dice-section">
+      <div class="dice-label">Lancez le dé</div>
+      <div class="dice-box" id="dice-box" onclick="rollDice()">?</div>
+      <button class="dice-btn" onclick="rollDice()">
+        <span style="font-size:18px">🎲</span> Lancer le dé
+      </button>
+      <div class="move-help">Vous avancerez automatiquement du nombre obtenu sur le circuit.</div>
+    </div>`;
+}
+
+function renderPanel_Move(){
+  document.getElementById('action-panel').innerHTML=`
+    ${renderCurrentPlayer()}
+    <div class="dice-section">
+      <div class="dice-label">Dé obtenu</div>
+      <div class="dice-box" style="background:var(--leaf);color:var(--paper);border-color:var(--leaf)">${diceVal}</div>
+      <div class="move-help">Déplacement automatique en cours...</div>
+    </div>`;
+}
+
+function renderPanel_Action(){
+  const cur=players[currentPlayerIdx];
+  const cell=boardState[cur.circuitPos];
+  let choicesHtml='';
+  let timerHtml='';
+  if(cell.type==='imp'&&!cell.transformed){
+    let realCost=cell.cost;
+    if(G.discount){realCost-=20000;}
+    if(G.surcut&&cell.sub==='cour')realCost+=50000;
+    const canAfford=G.bud>=realCost;
+    // Chrono de décision
+    timerHtml=`
+      <div class="decision-timer">
+        <div class="dt-label">Délibération de la cellule</div>
+        <div class="dt-time" id="dt-time">120</div>
+        <div class="dt-bar"><div class="dt-bar-fill" id="dt-bar-fill" style="width:100%"></div></div>
+        <div class="dt-hint">Discutez en équipe : faut-il investir ici ? Le budget est limité. 2 minutes pour délibérer. Sans décision → la zone reste bétonnée.</div>
+      </div>`;
+    choicesHtml=`
+      <button class="act-choice" ${canAfford?'':'disabled'} onclick="doInvest()">
+        <div class="act-c-name">🌱 Désimperméabiliser</div>
+        <div class="act-c-desc">Transformer cette case en zone végétalisée. Effet immédiat sur le quartier.</div>
+        <div class="act-c-cost">${Math.round(realCost/1000)}k€ • ICU ${cell.icu}°C • Eau +${cell.eau}% • Bio +${cell.bio}pts</div>
+      </button>
+      <button class="act-choice" onclick="doPass()">
+        <div class="act-c-name">⏭️ Passer</div>
+        <div class="act-c-desc">Ne rien faire ce tour</div>
+      </button>`;
+  } else if(cell.type==='chance'||cell.type==='malchance'||cell.type==='info'||cell.type==='citoyens'){
+    choicesHtml=`<button class="act-choice" onclick="drawCard('${cell.type}')">
+      <div class="act-c-name">🎴 Tirer la carte</div>
+      <div class="act-c-desc">Révéler la carte et appliquer ses effets</div>
+    </button>`;
+  } else if(cell.type==='mairie'||cell.type==='mairie-sec'){
+    choicesHtml=`<button class="act-choice" onclick="doMairie()">
+      <div class="act-c-name">💰 Récupérer subvention</div>
+      <div class="act-c-desc">+30k€ pour le budget municipal</div>
+    </button>
+    <button class="act-choice" onclick="doPass()">
+      <div class="act-c-name">⏭️ Passer</div>
+      <div class="act-c-desc">Continuer sans rien faire</div>
+    </button>`;
+  } else {
+    choicesHtml=`<button class="act-choice" onclick="doPass()">
+      <div class="act-c-name">⏭️ Passer</div>
+      <div class="act-c-desc">Aucune action possible</div>
+    </button>`;
+  }
+  document.getElementById('action-panel').innerHTML=`
+    ${renderCurrentPlayer()}
+    ${timerHtml}
+    <div class="action-choices">${choicesHtml}</div>`;
+  // Démarrer le chrono si zone imp
+  if(cell.type==='imp'&&!cell.transformed){
+    startDecisionTimer();
+  }
+}
+
+// ════════════════════════════════════════════════
+// CHRONO DE DÉCISION
+// ════════════════════════════════════════════════
+let decisionTimer=null;
+function startDecisionTimer(){
+  stopDecisionTimer();
+  let timeLeft=120;
+  const total=120;
+  const timeEl=document.getElementById('dt-time');
+  const barEl=document.getElementById('dt-bar-fill');
+  decisionTimer=setInterval(()=>{
+    timeLeft--;
+    if(timeEl)timeEl.textContent=timeLeft;
+    if(barEl)barEl.style.width=(timeLeft/total*100)+'%';
+    if(timeEl&&timeLeft<=15)timeEl.classList.add('urgent');
+    if(timeLeft<=0){
+      stopDecisionTimer();
+      // Temps écoulé : la zone reste bétonnée, on passe
+      showToast('⏱ Temps écoulé ! La cellule n\'a pas tranché — la zone reste imperméable.','r');
+      addJ(`${players[currentPlayerIdx].role.name} : indécision, zone non traitée`,'bad');
+      doPass();
+    }
+  },1000);
+}
+function stopDecisionTimer(){
+  if(decisionTimer){clearInterval(decisionTimer);decisionTimer=null;}
+}
+
+// ════════════════════════════════════════════════
+// DÉ
+// ════════════════════════════════════════════════
+function rollDice(){
+  if(phase!=='roll')return;
+  const dice=document.getElementById('dice-box');
+  dice.classList.add('rolling');
+  let rolls=0;
+  const interval=setInterval(()=>{
+    dice.textContent=Math.floor(Math.random()*6)+1;
+    rolls++;
+    if(rolls>10){
+      clearInterval(interval);
+      dice.classList.remove('rolling');
+      diceVal=Math.floor(Math.random()*6)+1;
+      dice.textContent=diceVal;
+      const cur=players[currentPlayerIdx];
+      addJ(`${cur.role.name} lance le dé : ${diceVal}`,'');
+      // Auto-déplacement : on passe en phase move puis on lance l'animation
+      setTimeout(()=>{
+        setPhase('move');
+        setTimeout(()=>{
+          const target=(cur.circuitPos+diceVal)%24;
+          animateMove(cur,target);
+        },600);
+      },500);
+    }
+  },50);
+}
+
+// ════════════════════════════════════════════════
+// DÉPLACEMENT SUR CIRCUIT
+// ════════════════════════════════════════════════
+function showTarget(){
+  const cur=players[currentPlayerIdx];
+  const target=(cur.circuitPos+diceVal)%24;
+  document.querySelectorAll('.cell.reachable').forEach(c=>c.classList.remove('reachable'));
+  const cell=document.querySelector(`.cell[data-idx="${target}"]`);
+  if(cell)cell.classList.add('reachable');
+}
+
+function clearTarget(){
+  document.querySelectorAll('.cell.reachable').forEach(c=>c.classList.remove('reachable'));
+}
+
+function onCircuitClick(idx){
+  if(phase!=='move')return;
+  const cur=players[currentPlayerIdx];
+  const target=(cur.circuitPos+diceVal)%24;
+  if(idx!==target){
+    showToast('Cliquez sur la case clignotante (la cible du dé).','r');
+    return;
+  }
+  // Animer le déplacement case par case
+  animateMove(cur,target);
+}
+
+function animateMove(player,targetIdx){
+  let steps=diceVal;
+  const moveStep=()=>{
+    if(steps<=0){
+      const cell=boardState[player.circuitPos];
+      addJ(`${player.role.name} arrive sur ${cell.label}`,'');
+      // Pion qui rebondit à l'arrivée
+      const cellEl=document.querySelector(`.cell[data-idx="${player.circuitPos}"]`);
+      if(cellEl){
+        const pawn=cellEl.querySelector('.pawn.current');
+        if(pawn){
+          pawn.classList.add('landed');
+          setTimeout(()=>pawn.classList.remove('landed'),600);
+        }
+      }
+      setTimeout(()=>setPhase('action'),500);
+      return;
+    }
+    player.circuitPos=(player.circuitPos+1)%24;
+    renderPawns();
+    steps--;
+    setTimeout(moveStep,180);
+  };
+  moveStep();
+}
+
+// ════════════════════════════════════════════════
+// ACTIONS
+// ════════════════════════════════════════════════
+function doInvest(){
+  stopDecisionTimer();
+  const cur=players[currentPlayerIdx];
+  const cell=boardState[cur.circuitPos];
+  let realCost=cell.cost;
+  if(G.discount){realCost-=20000;G.discount=false;}
+  if(G.surcut&&cell.sub==='cour')realCost+=50000;
+  G.bud-=realCost;
+  G.icu=Math.max(0,+(G.icu+cell.icu).toFixed(2));
+  G.eau=Math.min(100,Math.max(0,G.eau+cell.eau));
+  G.bio+=cell.bio;
+  G.sat=Math.min(100,Math.max(0,G.sat+cell.sat));
+  cell.transformed=true;
+  G.zonesDone++;
+  cur.actionsCount++;
+  addJ(`${cur.role.name} transforme ${cell.label} (-${Math.round(realCost/1000)}k€)`,'good');
+  
+  // Effets visuels !
+  const cellEl=document.querySelector(`.cell[data-idx="${cur.circuitPos}"]`);
+  if(cellEl){
+    const rect=cellEl.getBoundingClientRect();
+    const cx=rect.left+rect.width/2;
+    const cy=rect.top+rect.height/2;
+    spawnParticles(cx,cy,'leaf',30);
+    floatPoint(cx,cy-20,`+${cell.bio} bio`,'pos');
+    setTimeout(()=>floatPoint(cx+20,cy,`${cell.icu}°C`,'pos'),200);
+  }
+  pulseKPI('kv2');pulseKPI('kv0');pulseKPI('kv3');
+  
+  buildBoard();updateKPIs();updateMandat();renderCenter();
+  // Ajouter classe "just-transformed" pour pulsation
+  setTimeout(()=>{
+    const newCellEl=document.querySelector(`.cell[data-idx="${cur.circuitPos}"]`);
+    if(newCellEl)newCellEl.classList.add('just-transformed');
+  },50);
+  
+  if(checkDefeat())return;
+  endTurn();
+}
+
+function doStudy(){
+  stopDecisionTimer();
+  const cur=players[currentPlayerIdx];
+  const cell=boardState[cur.circuitPos];
+  cell.studied=true;
+  cur.studiesCount++;
+  const contraintes={cour:'Vérifier pollution sols (risque sanitaire)',rue:'DT-DICT obligatoire — réseaux enterrés',parking:'Réseaux à cartographier',friche:'Étude géotechnique recommandée'};
+  addJ(`${cur.role.name} étudie ${cell.label}`,'good');
+  showToast(`🔍 ${cell.label} : ${contraintes[cell.sub]||'Étude approfondie nécessaire'}`);
+  endTurn();
+}
+
+function doPass(){
+  stopDecisionTimer();
+  addJ(`${players[currentPlayerIdx].role.name} passe son tour`,'');
+  endTurn();
+}
+
+function doMairie(){
+  stopDecisionTimer();
+  const cur=players[currentPlayerIdx];
+  G.bud+=30000;
+  addJ(`${cur.role.name} récupère +30k€ à la mairie`,'good');
+  updateKPIs();
+  endTurn();
+}
+
+// ════════════════════════════════════════════════
+// CARTES
+// ════════════════════════════════════════════════
+function drawCard(type){
+  // Préparer la carte qui sera tirée
+  let card,kind;
+  if(type==='chance'){card=CARDS_CHANCE[Math.floor(Math.random()*CARDS_CHANCE.length)];kind='chance';}
+  else if(type==='malchance'){card=CARDS_MALCHANCE[Math.floor(Math.random()*CARDS_MALCHANCE.length)];kind='malchance';}
+  else if(type==='info'){card=CARDS_INFO[Math.floor(Math.random()*CARDS_INFO.length)];kind='info';}
+  else if(type==='citoyens'){card=CARDS_CITOYENS[Math.floor(Math.random()*CARDS_CITOYENS.length)];kind='citoyens';}
+  pendingCard={card,kind};
+  
+  // Lancer l'animation de pioche
+  showPioche(kind);
+}
+
+function showPioche(kind){
+  const screen=document.getElementById('s-pioche');
+  const title=document.getElementById('pioche-title');
+  const sub=document.getElementById('pioche-sub');
+  const instruction=document.getElementById('pioche-instruction');
+  const cards=[document.getElementById('card-0'),document.getElementById('card-1'),document.getElementById('card-2')];
+  
+  // Configurer titres et style selon type
+  const config={
+    chance:{title:'Carte <em>Chance</em>',sub:'Choisissez une carte parmi les trois proposées.',instruction:'Cliquez sur la carte de votre choix',symbol:'🍀',label:'Chance'},
+    malchance:{title:'Carte <em>Malchance</em>',sub:'Une mauvaise surprise vous attend...',instruction:'Tirage en cours...',symbol:'⚠️',label:'Malchance'},
+    info:{title:'Carte <em>Info pédagogique</em>',sub:'Une donnée scientifique à découvrir.',instruction:'Tirage en cours...',symbol:'💡',label:'Info'},
+    citoyens:{title:'Carte <em>Citoyens</em>',sub:'Une concertation se présente.',instruction:'Tirage en cours...',symbol:'👥',label:'Citoyens'}
+  };
+  const cfg=config[kind];
+  title.innerHTML=cfg.title;
+  sub.textContent=cfg.sub;
+  instruction.textContent=cfg.instruction;
+  
+  // Reset cartes
+  cards.forEach((c,i)=>{
+    c.className='deck-card '+kind;
+    c.querySelector('.deck-card-back-symbol').textContent=cfg.symbol;
+    c.querySelector('.deck-card-back-label').textContent=cfg.label;
+    c.style.transform='translate(0,0) rotate(0deg) scale(.5)';
+    c.style.opacity='0';
+    c.onclick=null;
+  });
+  
+  // Afficher l'écran
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  screen.classList.add('active');
+  
+  // Animation : les 3 cartes s'étalent
+  setTimeout(()=>{
+    cards.forEach((c,i)=>{
+      c.style.transform='';
+      c.style.opacity='1';
+      c.classList.add('spread-'+i);
+    });
+  },200);
+  
+  // Si Chance → choix utilisateur
+  if(kind==='chance'){
+    setTimeout(()=>{
+      cards.forEach(c=>{
+        c.classList.add('choosable');
+        c.onclick=()=>pickCardFromDeck(c,cards);
+      });
+    },900);
+  } else {
+    // Sinon → choix automatique aléatoire
+    setTimeout(()=>{
+      const chosenIdx=Math.floor(Math.random()*3);
+      pickCardFromDeck(cards[chosenIdx],cards);
+    },1400);
+  }
+}
+
+function pickCardFromDeck(chosenCard,allCards){
+  // Empêcher double-clic
+  if(window._cardPicking)return;
+  window._cardPicking=true;
+
+  // Désactiver les clics
+  allCards.forEach(c=>{c.onclick=null;c.classList.remove('choosable')});
+  document.getElementById('pioche-instruction').textContent='Carte révélée...';
+
+  // Particules sur la carte choisie
+  const rect=chosenCard.getBoundingClientRect();
+  const cx=rect.left+rect.width/2;
+  const cy=rect.top+rect.height/2;
+  const ptype=pendingCard.kind==='chance'?'star':pendingCard.kind==='malchance'?'fire':pendingCard.kind==='info'?'water':'leaf';
+  spawnParticles(cx,cy,ptype,15);
+
+  // Cartes non-choisies s'effacent
+  allCards.forEach(c=>{
+    if(c!==chosenCard)c.classList.add('fade-out');
+  });
+
+  // Carte choisie : recentrer + agrandir
+  chosenCard.classList.remove('spread-0','spread-1','spread-2');
+  chosenCard.classList.add('flying');
+
+  // Révélation de la vraie carte (S4) — délai unique et fiable
+  setTimeout(()=>{
+    window._cardPicking=false;
+    flashCard();
+    showCard(pendingCard.card,pendingCard.kind);
+  },900);
+}
+
+function showCard(card,kind){
+  // Cacher l'écran de pioche
+  document.getElementById('s-pioche').classList.remove('active');
+  const display=document.getElementById('card-display');
+  display.className='card-display '+kind;
+  document.getElementById('cd-iconbox').textContent=card.icon;
+  document.getElementById('cd-type').textContent={chance:'✨ CHANCE',malchance:'⚠️ MALCHANCE',info:'💡 INFO PÉDAGOGIQUE',citoyens:'👥 CONCERTATION'}[kind];
+  document.getElementById('cd-title').textContent=card.title;
+  document.getElementById('cd-desc').textContent=card.desc;
+  const stat=document.getElementById('cd-stat');
+  if(card.stat){stat.style.display='block';stat.innerHTML='📊 <strong>'+card.stat+'</strong>';}else stat.style.display='none';
+  const pills=document.getElementById('cd-pills');
+  pills.innerHTML=(card.pills||[]).map(p=>`<span class="cd-pill ${p.c}">${p.t}</span>`).join('');
+  const choices=document.getElementById('cd-choices');
+  const cont=document.getElementById('cd-continue');
+  if(card.choices){
+    choices.style.display='flex';
+    cont.style.display='none';
+    choices.innerHTML=card.choices.map((ch,i)=>`<button class="cd-choice" onclick="pickChoice(${i})"><strong>${ch.label}</strong>${ch.desc}</button>`).join('');
+  } else {
+    choices.style.display='none';
+    cont.style.display='inline-block';
+  }
+  show('s4');
+}
+
+function pickChoice(i){
+  if(!pendingCard)return;
+  const ch=pendingCard.card.choices[i];
+  ch.fn(G);
+  addJ(`Choix : ${ch.label}`,'event');
+  closeCard();
+}
+
+function closeCard(){
+  if(pendingCard){
+    if(pendingCard.card.fn)pendingCard.card.fn(G);
+    const t={chance:'good',malchance:'bad',info:'info',citoyens:'event'}[pendingCard.kind];
+    addJ(`${pendingCard.kind} : ${pendingCard.card.title}`,t);
+    
+    // Particules selon type
+    const cx=window.innerWidth/2,cy=window.innerHeight/2;
+    if(pendingCard.kind==='chance'){spawnParticles(cx,cy,'star',25);}
+    else if(pendingCard.kind==='malchance'){spawnParticles(cx,cy,'fire',20);}
+    else if(pendingCard.kind==='info'){spawnParticles(cx,cy,'water',20);}
+    else if(pendingCard.kind==='citoyens'){spawnParticles(cx,cy,'leaf',20);}
+    
+    pendingCard=null;
+  }
+  updateKPIs();updateMandat();renderCenter();
+  pulseKPI('kv3');pulseKPI('kv4');
+  show('s3');
+  if(checkDefeat())return;
+  endTurn();
+}
+
+// ════════════════════════════════════════════════
+// POUVOIRS
+// ════════════════════════════════════════════════
+function usePow(idx,btn){
+  const p=players[idx];
+  if(p.powerUsed)return;
+  if(idx!==currentPlayerIdx){showToast('Le pouvoir ne peut être joué que pendant votre tour.','r');return;}
+  p.powerUsed=true;G.pows[p.id]=true;
+  btn.className='pow-btn used';btn.disabled=true;btn.textContent='✓';
+  let msg='';
+  switch(p.role.id){
+    case'maire':msg='Décret d\'urgence ! Relancez le dé.';break;
+    case'financier':G.bud+=80000;msg='+80k€ de subvention débloqués !';break;
+    case'technique':msg='Expertise technique : prochaine carte révélée gratuitement.';break;
+    case'habitant':G.sat=Math.min(100,G.sat+15);msg='+15 satisfaction !';break;
+    case'espaces_verts':G.bio+=10;msg='Expertise végétale : +10 biodiversité !';break;
+    case'opposition':G.bud=Math.max(0,G.bud-20000);msg='Veto : -20k€ procédure, action contestée.';break;
+  }
+  addJ('Pouvoir : '+p.role.pow,'power');
+  showToast('⚡ '+msg,'g');
+  updateKPIs();renderCenter();buildPlayersList();
+}
+
+// ════════════════════════════════════════════════
+// FIN DE TOUR
+// ════════════════════════════════════════════════
+function endTurn(){
+  setTimeout(()=>{
+    currentPlayerIdx++;
+    if(currentPlayerIdx>=players.length){
+      currentPlayerIdx=0;
+      G.tour++;
+      // Dégradation climatique naturelle : la crise avance si on n'agit pas
+      if(G.tour<=6){
+        G.icu=Math.min(10,+(G.icu+0.3).toFixed(2));
+        G.sat=Math.max(0,G.sat-3);
+        G.eau=Math.max(0,G.eau-2);
+        addJ(`Pression climatique : +0.3°C ICU, la crise avance...`,'bad');
+      }
+      buildTourDots();
+      document.getElementById('lbl-tour').textContent=`Tour ${G.tour} / 6`;
+      updateKPIs();renderCenter();
+      if(G.tour>6){
+        showBilan();
+        return;
+      }
+      if(checkDefeat())return;
+      addJ(`--- Tour ${G.tour} ---`,'');
+    }
+    buildPlayersList();renderPawns();
+    // Overlay de transition entre joueurs
+    showTurnTransition(players[currentPlayerIdx],()=>{
+      setPhase('roll');
+    });
+  },800);
+}
+
+function checkDefeat(){
+  let msg=null;
+  if(G.bud<=0)msg='Budget épuisé — faillite de la collectivité.';
+  else if(G.icu>=8)msg='ICU ≥ 8°C — crise sanitaire déclarée.';
+  else if(G.sat<=10)msg='Motion de censure — la population se soulève.';
+  if(msg){showToast('💥 '+msg,'r');setTimeout(()=>showBilan(true),2500);return true;}
+  return false;
+}
+
+// ════════════════════════════════════════════════
+// BILAN
+// ════════════════════════════════════════════════
+function showBilan(defeat=false){
+  const sI=defeat&&G.icu>=8?0:Math.max(0,30*(6.2-G.icu)/6.2);
+  const sE=Math.max(0,25*G.eau/100);
+  const sB=Math.max(0,25*G.bio/80);
+  const sF=Math.max(0,20*G.bud/350000);
+  const baseScore=Math.round(sI+sE+sB+sF);
+  const zoneBonus=G.zonesDone>=8?5:G.zonesDone<6?-15:0;
+  const total=Math.max(0,Math.round(baseScore+zoneBonus)*(G.elections&&G.sat<40?.8:1));
+  const finalScore=defeat?0:total;
+  const mandatFailed=G.zonesDone<6;
+
+  const ring=document.getElementById('sr-fill');
+  const circ=477;
+  setTimeout(()=>{if(ring)ring.style.strokeDashoffset=circ-(circ*(finalScore/100));},300);
+  const numEl=document.getElementById('snum');
+  let cur=0;const step=Math.max(1,Math.ceil(finalScore/50));
+  const cnt=setInterval(()=>{cur=Math.min(cur+step,finalScore);numEl.textContent=cur;if(cur>=finalScore){clearInterval(cnt);numEl.classList.add('pulse');setTimeout(()=>numEl.classList.remove('pulse'),400);}},30);
+
+  let lv,msg;
+  if(defeat){lv='Défaite 💥';msg='Le mandat s\'arrête prématurément. La crise a eu raison de votre cellule.';}
+  else if(mandatFailed){lv='Mandat échoué ⚠️';msg=`Seulement ${G.zonesDone}/12 zones transformées (minimum 6 requis). Le quartier reste vulnérable.`;}
+  else if(finalScore>=80){lv='Excellent 🏆';msg=`Saint-Jean est devenu un quartier de référence nationale. ${G.zonesDone} zones transformées sur 12.`;}
+  else if(finalScore>=60){lv='Bien 👍';msg=`Le quartier est en bonne voie. ${G.zonesDone} zones transformées sur 12.`;}
+  else if(finalScore>=40){lv='Moyen ⚡';msg=`Des progrès réels mais insuffisants. ${G.zonesDone} zones transformées.`;}
+  else {lv='Insuffisant 💥';msg='Le quartier a peu évolué malgré vos efforts.';}
+
+  document.getElementById('bilan-lv').textContent=lv;
+  document.getElementById('bilan-msg').textContent=msg;
+  const icuR=+(6.2-G.icu).toFixed(1);
+  document.getElementById('bilan-grid').innerHTML=[
+    {v:(icuR>0?'-':'')+icuR+'°C',l:'Réduction ICU',r:'Données Météo-France/LIED',c:'#C0594A',stripe:'#C0594A'},
+    {v:Math.round(G.eau)+'%',l:'Taux infiltration',r:'Médiane DESSERT : 20%',c:'#3E7B92',stripe:'#3E7B92'},
+    {v:Math.round(G.bio)+' pts',l:'Biodiversité',r:'DésiVille ADEME 2024',c:'#2D5F3F',stripe:'#2D5F3F'},
+    {v:G.zonesDone+'/12',l:'Zones transformées',r:'Mandat : ≥ 6 requis',c:'#A57F4F',stripe:'#A57F4F'}
+  ].map(k=>`<div class="bk" style="--stripe:${k.stripe}"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:${k.stripe}"></div><div class="bk-val" style="color:${k.c}">${k.v}</div><div class="bk-lbl">${k.l}</div><div class="bk-ref">${k.r}</div></div>`).join('');
+  show('s5');
+  // Confettis si victoire correcte
+  if(!defeat && !mandatFailed && finalScore>=60){
+    setTimeout(()=>spawnConfettis(),500);
+  }
+}
+
+// ════════════════════════════════════════════════
+// JOURNAL & UTILS
+// ════════════════════════════════════════════════
+function addJ(text,type=''){
+  const t=new Date().toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'});
+  G.journal=G.journal||[];
+  G.journal.unshift({text,type,t});
+  const c=document.getElementById('journal');if(!c)return;
+  c.innerHTML=G.journal.slice(0,15).map(j=>`<div class="j-entry ${j.type}">[${j.t}] ${j.text}</div>`).join('');
+}
+
+function showToast(msg,cls=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show '+(cls||'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function toggleLegend(){
+  document.getElementById('board-legend').classList.toggle('collapsed');
+}
+
+// ════════════════════════════════════════════════
+// EFFETS VISUELS DE JEU
+// ════════════════════════════════════════════════
+
+// Particules de feuilles/étoiles autour d'un point
+function spawnParticles(x,y,type='leaf',count=20){
+  const canvas=document.getElementById('fx-canvas');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  const particles=[];
+  const colors={
+    leaf:['#2D5F3F','#4A8B5C','#7AB088','#C8DEC9'],
+    star:['#E8B547','#F5D079','#FFE0A0'],
+    water:['#3E7B92','#6BA3B8','#B8D4DC'],
+    fire:['#C0594A','#D97862','#F4D8D1']
+  };
+  const palette=colors[type]||colors.leaf;
+  for(let i=0;i<count;i++){
+    const angle=Math.random()*Math.PI*2;
+    const speed=2+Math.random()*4;
+    particles.push({
+      x,y,
+      vx:Math.cos(angle)*speed,
+      vy:Math.sin(angle)*speed-2,
+      life:1,
+      size:3+Math.random()*5,
+      color:palette[Math.floor(Math.random()*palette.length)],
+      rotation:Math.random()*Math.PI*2,
+      vrot:(Math.random()-.5)*.3,
+      type
+    });
+  }
+  function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let alive=false;
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      p.vy+=.15;
+      p.life-=.018;
+      p.rotation+=p.vrot;
+      if(p.life>0){
+        alive=true;
+        ctx.save();
+        ctx.translate(p.x,p.y);
+        ctx.rotate(p.rotation);
+        ctx.globalAlpha=p.life;
+        ctx.fillStyle=p.color;
+        if(p.type==='leaf'){
+          ctx.beginPath();
+          ctx.ellipse(0,0,p.size,p.size*.6,0,0,Math.PI*2);
+          ctx.fill();
+        } else if(p.type==='star'){
+          ctx.beginPath();
+          for(let i=0;i<5;i++){
+            const a=(i/5)*Math.PI*2-Math.PI/2;
+            const r=i%2===0?p.size:p.size*.4;
+            const px=Math.cos(a)*r,py=Math.sin(a)*r;
+            if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+          }
+          ctx.closePath();ctx.fill();
+        } else {
+          ctx.beginPath();
+          ctx.arc(0,0,p.size,0,Math.PI*2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    });
+    if(alive)requestAnimationFrame(animate);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  animate();
+}
+
+// Point flottant +5 pts qui monte
+function floatPoint(x,y,text,type='pos'){
+  const el=document.createElement('div');
+  el.className='float-pt '+type;
+  el.textContent=text;
+  el.style.left=x+'px';
+  el.style.top=y+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1500);
+}
+
+// Faire pulser un KPI quand il change
+function pulseKPI(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.remove('changing');
+  void el.offsetWidth;
+  el.classList.add('changing');
+}
+
+// Flash de carte
+function flashCard(){
+  const f=document.getElementById('card-flash');
+  f.classList.remove('flash');
+  void f.offsetWidth;
+  f.classList.add('flash');
+}
+
+// Confettis pour victoire
+function spawnConfettis(){
+  const colors=['#2D5F3F','#4A8B5C','#7AB088','#E8B547','#C0594A','#3E7B92'];
+  for(let i=0;i<60;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='confetti';
+      c.style.left=Math.random()*100+'vw';
+      c.style.background=colors[Math.floor(Math.random()*colors.length)];
+      c.style.animationDelay=Math.random()*.5+'s';
+      c.style.animationDuration=(2+Math.random()*2)+'s';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),4000);
+    },i*40);
+  }
+}
+
+// Overlay de transition entre joueurs
+function showTurnTransition(player,cb){
+  const ov=document.getElementById('turn-overlay');
+  document.getElementById('to-icon').textContent=player.role.icon;
+  document.getElementById('to-icon').style.background=player.role.iconBg;
+  document.getElementById('to-name').textContent=player.role.name;
+  ov.classList.add('show');
+  setTimeout(()=>{
+    ov.classList.remove('show');
+    setTimeout(cb,300);
+  },1100);
+}
+
+initG();
+
+initG();
+</script>
+</body>
+</html>
